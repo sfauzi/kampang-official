@@ -141,7 +141,7 @@ const saveNotes = async () => {
                 <template v-if="!isEditingNotes">
                   <span v-if="user.notes" class="block">{{ user.notes }}</span>
                   <span v-else class="block text-gray-400 italic">Add a note...</span>
-                  <button @click="startEditNotes" class="mt-1 text-gray-400 hover:text-gray-600 transition">
+                  <button @click="startEditNotes" class="cursor-pointer mt-1 text-gray-400 hover:text-gray-600 transition">
                     <Icon name="heroicons:pencil" class="w-3 h-3" />
                   </button>
                 </template>
@@ -169,7 +169,7 @@ const saveNotes = async () => {
               </div>
             </div>
             <button @click="showEditModal = true"
-              class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition">
+              class="cursor-pointer flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition">
               <Icon name="heroicons:pencil" class="w-4 h-4" />
               Edit Profil
             </button>
@@ -206,7 +206,7 @@ const saveNotes = async () => {
                 Lagu Favorit
               </h2>
               <button @click="showSongModal = true"
-                class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition">
+                class="cursor-pointer flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition">
                 <Icon name="heroicons:plus" class="w-4 h-4" />
                 Pilih Lagu
               </button>
@@ -246,7 +246,7 @@ const saveNotes = async () => {
                       Spotify
                     </a>
                     <button @click="handleDeleteProfileSong"
-                      class="flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-600 text-xs rounded-lg hover:bg-red-200 transition">
+                      class="cursor-pointer flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-600 text-xs rounded-lg hover:bg-red-200 transition">
                       <Icon name="heroicons:trash" class="w-3.5 h-3.5" />
                       Hapus
                     </button>
@@ -256,7 +256,7 @@ const saveNotes = async () => {
                 <!-- Preview -->
                 <div class="flex-shrink-0">
                   <button v-if="profileSong.song_preview_url || profileSong.song_id" @click="showSpotifyModal = true"
-                    class="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition">
+                    class="cursor-pointer flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition">
                     <Icon name="mdi:spotify" class="w-3.5 h-3.5" />
                     Preview
                   </button>
@@ -276,7 +276,7 @@ const saveNotes = async () => {
 
           <!-- Logout Button -->
           <button @click="logout"
-            class="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition">
+            class="w-full cursor-pointer flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition">
             <Icon name="heroicons:arrow-right-on-rectangle" class="w-4 h-4" />
             Logout
           </button>
