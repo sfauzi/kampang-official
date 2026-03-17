@@ -35,7 +35,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
         <!-- Close -->
         <button
           @click="emit('close')"
-          class="absolute top-4 right-4 z-10 rounded-full bg-white/90 p-2 text-gray-600 shadow-md hover:bg-white hover:text-gray-900 transition-all"
+          class="absolute cursor-pointer top-4 right-4 z-10 flex items-center justify-center w-9 h-9 rounded-full bg-white/90 text-gray-600 shadow-md backdrop-blur-sm transition-all duration-200 hover:bg-white hover:text-gray-900"
         >
           <Icon name="heroicons:x-mark" class="w-5 h-5" />
         </button>

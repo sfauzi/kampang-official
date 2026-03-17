@@ -96,14 +96,14 @@ const handleSubmit = async () => {
 <template>
   <div
     v-if="open"
-    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4"
     @click.self="$emit('update:open', false)"
   >
     <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-gray-900">Edit Profil</h2>
         <button
-          class="text-gray-400 hover:text-gray-600 transition"
+          class="cursor-pointer text-gray-400 hover:text-gray-600 transition"
           @click="$emit('update:open', false)"
         >
           <Icon name="heroicons:x-mark-20-solid" class="w-6 h-6" />
@@ -198,7 +198,7 @@ const handleSubmit = async () => {
         <button
           type="submit"
           :disabled="isLoading"
-          class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400"
+          class="cursor-pointer w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400"
         >
           <span v-if="!isLoading">Simpan Perubahan</span>
           <span v-else class="flex items-center justify-center gap-2">

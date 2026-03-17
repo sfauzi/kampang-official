@@ -60,14 +60,14 @@ const closeModal = () => {
 <template>
   <div
     v-if="open"
-    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4"
     @click.self="closeModal"
   >
     <div class="bg-white rounded-2xl shadow-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-gray-900">Pilih Lagu Profile</h2>
         <button
-          class="text-gray-400 hover:text-gray-600 transition"
+          class="cursor-pointer text-gray-400 hover:text-gray-600 transition"
           @click="closeModal"
         >
           <Icon name="heroicons:x-mark-20-solid" class="w-6 h-6" />
@@ -88,7 +88,7 @@ const closeModal = () => {
           <button
             @click="performSearch"
             :disabled="isSearching || !searchQuery.trim()"
-            class="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:bg-gray-400"
+            class="cursor-pointer px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:bg-gray-400"
           >
             <span v-if="!isSearching">Cari</span>
             <span v-else class="flex items-center gap-2">
@@ -165,7 +165,7 @@ const closeModal = () => {
         <button
           type="button"
           @click="closeModal"
-          class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+          class="cursor-pointer flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
         >
           Batal
         </button>
@@ -173,7 +173,7 @@ const closeModal = () => {
           type="button"
           @click="handleConfirm"
           :disabled="!selectedTrack"
-          class="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:bg-gray-400"
+          class="cursor-pointer flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:bg-gray-400"
         >
           Pilih Lagu
         </button>
