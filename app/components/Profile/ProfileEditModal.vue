@@ -96,7 +96,7 @@ const handleSubmit = async () => {
 <template>
   <div
     v-if="open"
-    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4"
     @click.self="$emit('update:open', false)"
   >
     <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
