@@ -18,6 +18,34 @@ const showSongModal = ref(false)
 const isLoadingProfileSong = ref(false)
 const errorMessage = ref('')
 
+import { computed, watchEffect } from 'vue'
+
+const seoTitle = computed(() => {
+  if (!user.value) return 'Profile'
+  return `${user.value.name}  |`
+})
+
+const seoDescription = computed(() => {
+  if (!user.value) return 'Halaman profile user'
+  return `Profile ${user.value.name} di Kampang Official`
+})
+
+watchEffect(() => {
+  useSeoMeta({
+    title: seoTitle.value,
+    description: seoDescription.value,
+
+    ogTitle: seoTitle.value,
+    ogDescription: seoDescription.value,
+    ogImage: user.value?.avatar || 'https://kampang-official.vercel.app/logo-ko.png',
+    ogUrl: 'https://kampang-official.vercel.app/profile',
+
+    twitterCard: 'summary_large_image',
+    twitterTitle: seoTitle.value,
+    twitterDescription: seoDescription.value,
+    twitterImage: user.value?.avatar || 'https://kampang-official.vercel.app/logo-ko.png',
+  })
+})
 
 onMounted(async () => {
   // Plugin auth.client.ts sudah panggil init() + fetchUser() saat app load.
