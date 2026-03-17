@@ -13,7 +13,7 @@ onMounted(() => {
     class="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-6 px-4 text-center"
   >
     <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
-      Selamat Datang di <span class="text-blue-600">MyApp</span>
+      Selamat Datang di <span class="text-blue-600 font-Mansalva">MyApp</span>
     </h1>
 
     <p class="text-gray-500 text-lg max-w-md">

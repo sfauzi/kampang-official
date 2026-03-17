@@ -13,6 +13,28 @@ export interface User {
   avatar_url: string | null
 }
 
+export interface ProfileSong {
+  id: string
+  user_id: string
+  song_id: string
+  song_title: string
+  song_artist: string
+  song_image: string | null
+  song_preview_url: string | null
+  spotify_url: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface SpotifyTrack {
+  id: string
+  title: string
+  artist: string
+  image: string | null
+  preview_url: string | null
+  spotify_url: string | null
+}
+
 export interface AuthState {
   user: User | null
   token: string | null
