@@ -325,7 +325,7 @@ useSeoMeta({
 
       <template v-if="!isAuthenticated">
         <button
-          class="pointer-events-auto flex items-center gap-3 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-base font-medium shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200"
+          class="pointer-events-auto cursor-pointer flex items-center gap-3 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-base font-medium shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200"
           @click="loginWithGoogle">
           <Icon name="logos:google-icon" class="w-5 h-5" />
           Login dengan Google
