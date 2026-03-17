@@ -298,7 +298,7 @@ const saveNotes = async () => {
       <div class="relative w-full max-w-md rounded-2xl bg-white p-4 shadow-xl">
         <!-- Close Button -->
         <button @click="showSpotifyModal = false"
-          class="absolute top-4 right-4 z-10 cursor-pointer rounded-full bg-white/90 p-2 text-gray-600 shadow-md backdrop-blur-sm transition-all duration-200 hover:bg-white hover:text-gray-900">
+          class="absolute cursor-pointer top-4 right-4 z-10 flex items-center justify-center w-9 h-9 rounded-full bg-white/90 text-gray-600 shadow-md backdrop-blur-sm transition-all duration-200 hover:bg-white hover:text-gray-900">
           <Icon name="heroicons:x-mark" class="w-5 h-5" />
         </button>
 
