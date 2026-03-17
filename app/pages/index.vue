@@ -230,7 +230,7 @@ onUnmounted(() => {
       </h1>
 
       <p class="text-gray-600 text-lg max-w-md drop-shadow-sm">
-        Masuk dengan akun Google untuk mengakses fitur lengkap.
+        Masuk dengan akun Google untuk mendapatkan notifikasi peluncuran.
       </p>
 
       <!-- Countdown Timer -->
