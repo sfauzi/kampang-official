@@ -226,7 +226,7 @@ onUnmounted(() => {
       class="relative z-10 flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-6 px-4 text-center pointer-events-none">
       <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight drop-shadow-sm">
         Selamat Datang di
-        <span class="text-blue-600 font-mansalva">MyApp</span>
+        <span class="text-blue-600 font-mansalva">Kampang Official</span>
       </h1>
 
       <p class="text-gray-600 text-lg max-w-md drop-shadow-sm">
