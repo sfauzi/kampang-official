@@ -144,6 +144,71 @@ const closeSongModal = () => {
 const selectedUser = computed(() =>
   users.value.find((u) => u.id === selectedUserId.value) ?? null
 )
+
+// Countdown state
+const remainingSeconds = ref(0)
+const isLaunched = ref(false)
+const isLoadingCountdown = ref(true)
+let countdownInterval: ReturnType<typeof setInterval> | null = null
+
+const fetchCountdown = async () => {
+  try {
+    const data = await $fetch<{
+      server_time: string
+      target_time: string
+      remaining_seconds: number
+      is_launched: boolean
+    }>(`${config.public.apiBase}/api/countdown`)
+
+    // Sinkronisasi dengan server time untuk akurasi
+    const serverNow = new Date(data.server_time).getTime()
+    const clientNow = Date.now()
+    const drift = clientNow - serverNow // selisih client vs server
+
+    remainingSeconds.value = data.remaining_seconds
+    isLaunched.value = data.is_launched
+    isLoadingCountdown.value = false
+
+    // Koreksi drift setiap tick
+    if (countdownInterval) clearInterval(countdownInterval)
+
+    countdownInterval = setInterval(() => {
+      if (remainingSeconds.value <= 0) {
+        isLaunched.value = true
+        remainingSeconds.value = 0
+        if (countdownInterval) clearInterval(countdownInterval)
+        return
+      }
+      remainingSeconds.value -= 1
+    }, 1000)
+  } catch (err) {
+    console.error('[index] fetchCountdown error:', err)
+    isLoadingCountdown.value = false
+  }
+}
+
+// Format helpers
+const countdownParts = computed(() => {
+  const total = remainingSeconds.value
+  const days = Math.floor(total / 86400)
+  const hours = Math.floor((total % 86400) / 3600)
+  const minutes = Math.floor((total % 3600) / 60)
+  const seconds = total % 60
+  return { days, hours, minutes, seconds }
+})
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
+onMounted(async () => {
+  init()
+  await fetchUsers()
+  await fetchCountdown()
+})
+
+onUnmounted(() => {
+  if (countdownInterval) clearInterval(countdownInterval)
+})
+
 </script>
 
 <template>
@@ -151,20 +216,14 @@ const selectedUser = computed(() =>
 
     <!-- Floating Users Background -->
     <div class="users-container absolute inset-0">
-      <UserCircle
-        v-for="(user, i) in users"
-        :key="user.id"
-        :user="user"
-        :index="i"
-        :is-dragging="draggedUserId === user.id"
-        :position="getUserPosition(user.id)"
-        @dragstart="startDrag"
-        @opensong="openSongModal"
-      />
+      <UserCircle v-for="(user, i) in users" :key="user.id" :user="user" :index="i"
+        :is-dragging="draggedUserId === user.id" :position="getUserPosition(user.id)" @dragstart="startDrag"
+        @opensong="openSongModal" />
     </div>
 
     <!-- Center Content -->
-    <div class="relative z-10 flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-6 px-4 text-center pointer-events-none">
+    <div
+      class="relative z-10 flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-6 px-4 text-center pointer-events-none">
       <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight drop-shadow-sm">
         Selamat Datang di
         <span class="text-blue-600 font-mansalva">MyApp</span>
@@ -174,21 +233,92 @@ const selectedUser = computed(() =>
         Masuk dengan akun Google untuk mengakses fitur lengkap.
       </p>
 
+      <!-- Countdown Timer -->
+      <div class="pointer-events-none w-full max-w-lg">
+
+        <!-- Loading -->
+        <div v-if="isLoadingCountdown" class="flex justify-center">
+          <div class="w-6 h-6 rounded-full border-2 border-blue-300 border-t-blue-600 animate-spin" />
+        </div>
+
+        <!-- Launched -->
+        <div v-else-if="isLaunched" class="flex flex-col items-center gap-2">
+          <span
+            class="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-sm font-medium text-green-700 border border-green-200">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block" />
+            Sudah Diluncurkan 🎉
+          </span>
+        </div>
+
+        <!-- Counting down -->
+        <div v-else class="flex flex-col items-center gap-3">
+          
+          <div class="flex items-end gap-2 sm:gap-4">
+            <!-- Days -->
+            <div v-if="countdownParts.days > 0" class="flex flex-col items-center">
+              <div
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-gray-900 tabular-nums">
+                  {{ pad(countdownParts.days) }}
+                </span>
+              </div>
+              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Hari</span>
+            </div>
+
+            <span v-if="countdownParts.days > 0" class="text-2xl font-bold text-gray-400 mb-6">:</span>
+
+            <!-- Hours -->
+            <div class="flex flex-col items-center">
+              <div
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-gray-900 tabular-nums">
+                  {{ pad(countdownParts.hours) }}
+                </span>
+              </div>
+              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Jam</span>
+            </div>
+
+            <span class="text-2xl font-bold text-gray-400 mb-6">:</span>
+
+            <!-- Minutes -->
+            <div class="flex flex-col items-center">
+              <div
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-gray-900 tabular-nums">
+                  {{ pad(countdownParts.minutes) }}
+                </span>
+              </div>
+              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Menit</span>
+            </div>
+
+            <span class="text-2xl font-bold text-gray-400 mb-6">:</span>
+
+            <!-- Seconds -->
+            <div class="flex flex-col items-center">
+              <div
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center transition-all duration-300">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-blue-600 tabular-nums">
+                  {{ pad(countdownParts.seconds) }}
+                </span>
+              </div>
+              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Detik</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <template v-if="!isAuthenticated">
         <button
           class="pointer-events-auto flex items-center gap-3 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-base font-medium shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200"
-          @click="loginWithGoogle"
-        >
+          @click="loginWithGoogle">
           <Icon name="logos:google-icon" class="w-5 h-5" />
           Login dengan Google
         </button>
       </template>
 
       <template v-else>
-        <NuxtLink
-          to="/profile"
-          class="pointer-events-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-base font-medium hover:bg-blue-700 transition"
-        >
+        <NuxtLink to="/profile"
+          class="pointer-events-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-base font-medium hover:bg-blue-700 transition">
           Lihat Profil Saya →
         </NuxtLink>
       </template>
