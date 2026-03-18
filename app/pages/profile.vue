@@ -252,7 +252,23 @@ const handleDeleteAvatar = async () => {
       <div v-else
         class="bg-white dark:bg-stone-900 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-800 overflow-hidden transition-colors duration-300">
 
-        <div class="h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700" />
+        <div class="relative h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700">
+            <button
+                @click="$router.back()"
+                class="absolute cursor-pointer top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                      bg-white/20 hover:bg-white/30 active:bg-white/40
+                      text-white text-sm font-medium
+                      backdrop-blur-sm transition-all duration-200"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 5l-7 7 7 7"/>
+                </svg>
+                Kembali
+            </button>
+        </div>
+        <!-- <div class="h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700" /> -->
 
         <div class="px-8 pb-8 -mt-12">
           <div class="flex items-end justify-between">
