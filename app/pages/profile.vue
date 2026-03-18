@@ -38,13 +38,13 @@ watchEffect(() => {
 
     ogTitle: seoTitle.value,
     ogDescription: seoDescription.value,
-    ogImage: user.value?.avatar || 'https://kampang-official.vercel.app/logo-ko.png',
-    ogUrl: 'https://kampang-official.vercel.app/profile',
+    ogImage: user.value?.avatar || 'https://kampangofficial.vercel.app/logo-ko.png',
+    ogUrl: 'https://kampangofficial.vercel.app/profile',
 
     twitterCard: 'summary_large_image',
     twitterTitle: seoTitle.value,
     twitterDescription: seoDescription.value,
-    twitterImage: user.value?.avatar || 'https://kampang-official.vercel.app/logo-ko.png',
+    twitterImage: user.value?.avatar || 'https://kampangofficial.vercel.app/logo-ko.png',
   })
 })
 
