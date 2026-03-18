@@ -96,14 +96,14 @@ const handleSubmit = async () => {
 <template>
   <div
     v-if="open"
-    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-colors duration-300"
     @click.self="$emit('update:open', false)"
   >
-    <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div class="bg-white dark:bg-stone-900 rounded-2xl shadow-xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto transition-colors duration-300">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-900">Edit Profil</h2>
+        <h2 class="text-2xl font-bold text-stone-900 dark:text-stone-50">Edit Profil</h2>
         <button
-          class="cursor-pointer text-gray-400 hover:text-gray-600 transition"
+          class="cursor-pointer text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-400 transition"
           @click="$emit('update:open', false)"
         >
           <Icon name="heroicons:x-mark-20-solid" class="w-6 h-6" />
@@ -113,7 +113,7 @@ const handleSubmit = async () => {
       <!-- Error Message -->
       <div
         v-if="errorMessage"
-        class="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg text-sm text-red-700"
+        class="mb-4 p-3 bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 transition-colors duration-300"
       >
         {{ errorMessage }}
       </div>
@@ -121,9 +121,9 @@ const handleSubmit = async () => {
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <!-- Avatar Upload -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Avatar</label>
+          <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2 transition-colors duration-300">Avatar</label>
           <div class="flex flex-col items-center gap-4">
-            <div class="w-24 h-24 rounded-2xl bg-gray-100 flex items-center justify-center overflow-hidden">
+            <div class="w-24 h-24 rounded-2xl bg-stone-200 dark:bg-stone-800 flex items-center justify-center overflow-hidden transition-colors duration-300">
               <img
                 v-if="avatarPreview"
                 :src="avatarPreview"
@@ -133,7 +133,7 @@ const handleSubmit = async () => {
               <Icon
                 v-else
                 name="heroicons:user-circle"
-                class="w-12 h-12 text-gray-400"
+                class="w-12 h-12 text-stone-400 dark:text-stone-500"
               />
             </div>
             <label class="cursor-pointer">
@@ -143,7 +143,7 @@ const handleSubmit = async () => {
                 class="hidden"
                 @change="handleAvatarChange"
               />
-              <span class="px-4 py-2 bg-blue-100 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-200 transition">
+              <span class="px-4 py-2 bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 rounded-lg text-sm font-medium hover:bg-amber-200 dark:hover:bg-amber-900 transition">
                 Pilih Foto
               </span>
             </label>
@@ -152,21 +152,21 @@ const handleSubmit = async () => {
 
         <!-- Name -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+          <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1 transition-colors duration-300">Nama</label>
           <input
             v-model="formData.name"
             type="text"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-50 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors duration-300"
             placeholder="Nama Anda"
           />
         </div>
 
         <!-- Description -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+          <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1 transition-colors duration-300">Deskripsi</label>
           <textarea
             v-model="formData.description"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            class="w-full px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-50 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 resize-none transition-colors duration-300"
             placeholder="Deskripsi singkat tentang Anda"
             rows="2"
           />
@@ -174,21 +174,21 @@ const handleSubmit = async () => {
 
         <!-- Address -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+          <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1 transition-colors duration-300">Alamat</label>
           <input
             v-model="formData.address"
             type="text"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-50 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-colors duration-300"
             placeholder="Alamat Anda"
           />
         </div>
 
         <!-- Notes -->
         <!-- <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+          <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1 transition-colors duration-300">Catatan</label>
           <textarea
             v-model="formData.notes"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            class="w-full px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-50 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 resize-none transition-colors duration-300"
             placeholder="Catatan tambahan"
             rows="2"
           />
@@ -198,7 +198,7 @@ const handleSubmit = async () => {
         <button
           type="submit"
           :disabled="isLoading"
-          class="cursor-pointer w-full px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400"
+          class="cursor-pointer w-full px-4 py-3 bg-amber-600 dark:bg-amber-700 text-white rounded-lg font-medium hover:bg-amber-700 dark:hover:bg-amber-600 transition disabled:bg-stone-400 dark:disabled:bg-stone-600"
         >
           <span v-if="!isLoading">Simpan Perubahan</span>
           <span v-else class="flex items-center justify-center gap-2">
