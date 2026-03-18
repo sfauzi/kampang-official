@@ -65,18 +65,15 @@ export const useAuth = () => {
     description?: string | null
     address?: string | null
     notes?: string | null
-    avatar?: File | null
+    avatar?: File | null | undefined  // undefined = skip, null = hapus, File = upload baru
   }): Promise<boolean> => {
     const currentToken = token.value ?? tokenStorage.get()
-
-    if (!currentToken) {
-      console.warn('[useAuth] updateProfile: tidak ada token')
-      return false
-    }
+    if (!currentToken) return false
 
     try {
       const formData = new FormData()
       formData.append('name', data.name)
+
       if (data.description !== undefined) {
         formData.append('description', data.description || '')
       }
@@ -86,13 +83,19 @@ export const useAuth = () => {
       if (data.notes !== undefined) {
         formData.append('notes', data.notes || '')
       }
-      if (data.avatar) {
-        formData.append('avatar', data.avatar)
-      }
 
-            if (data.avatar === null) {
-        formData.append('remove_avatar', '1')
+      // ✅ Hanya proses avatar jika explicitly dikirim (bukan undefined)
+      if (data.avatar !== undefined) {
+        if (data.avatar instanceof File) {
+          // Ada file baru → upload
+          formData.append('avatar', data.avatar)
+        } else if (data.avatar === null) {
+          // null → hapus avatar
+          formData.append('remove_avatar', '1')
+        }
       }
+      // undefined → tidak append apapun → backend tidak menyentuh avatar
+
       const response = await $fetch<User>(
         `${config.public.apiBase}/api/user/update`,
         {
