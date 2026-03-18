@@ -157,8 +157,9 @@ const remainingSeconds = ref(0)
 const isLaunched = ref(false)
 const isLoadingCountdown = ref(true)
 let countdownInterval: ReturnType<typeof setInterval> | null = null
+let countdownSyncInterval: ReturnType<typeof setInterval> | null = null
 
-const fetchCountdown = async () => {
+const fetchCountdown = async (resetTick = true) => {
   try {
     const data = await $fetch<{
       server_time: string
@@ -167,27 +168,30 @@ const fetchCountdown = async () => {
       is_launched: boolean
     }>(`${config.public.apiBase}/api/countdown`)
 
-    // Sinkronisasi dengan server time untuk akurasi
     const serverNow = new Date(data.server_time).getTime()
     const clientNow = Date.now()
-    const drift = clientNow - serverNow // selisih client vs server
+    const drift = clientNow - serverNow
 
     remainingSeconds.value = data.remaining_seconds
     isLaunched.value = data.is_launched
     isLoadingCountdown.value = false
 
-    // Koreksi drift setiap tick
-    if (countdownInterval) clearInterval(countdownInterval)
+    // hanya reset interval kalau pertama kali
+    if (resetTick) {
+      if (countdownInterval) clearInterval(countdownInterval)
 
-    countdownInterval = setInterval(() => {
-      if (remainingSeconds.value <= 0) {
-        isLaunched.value = true
-        remainingSeconds.value = 0
-        if (countdownInterval) clearInterval(countdownInterval)
-        return
-      }
-      remainingSeconds.value -= 1
-    }, 1000)
+      countdownInterval = setInterval(() => {
+        if (remainingSeconds.value <= 0) {
+          isLaunched.value = true
+          remainingSeconds.value = 0
+          if (countdownInterval) clearInterval(countdownInterval)
+          return
+        }
+
+        remainingSeconds.value -= 1
+      }, 1000)
+    }
+
   } catch (err) {
     console.error('[index] fetchCountdown error:', err)
     isLoadingCountdown.value = false
@@ -216,11 +220,16 @@ onMounted(async () => {
   usersInterval = setInterval(() => {
     fetchUsers()
   }, 3000) // 3 detik
+
+  countdownSyncInterval = setInterval(() => {
+    fetchCountdown(false)
+  }, 10000)
 })
 
 onUnmounted(() => {
   if (countdownInterval) clearInterval(countdownInterval)
   if (usersInterval) clearInterval(usersInterval)
+  if (countdownSyncInterval) clearInterval(countdownSyncInterval)
 })
 
 useSeoMeta({
