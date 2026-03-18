@@ -48,8 +48,8 @@ const getInitial = (name: string) => name?.charAt(0).toUpperCase() ?? '?'
     }" @mousedown="emit('dragstart', $event, user.id)" @touchstart="emit('dragstart', $event, user.id)">
         <div class="relative">
             <!-- Avatar -->
-            <div class="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden rounded-full border-2 border-gray-200 bg-gray-700 text-xl font-bold shadow-lg"
-                :class="isDragging ? 'ring-4 ring-blue-400 ring-opacity-50 shadow-2xl' : 'hover:shadow-xl'">
+            <div class="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden rounded-full border-2 border-stone-300 dark:border-stone-700 bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-xl font-bold shadow-lg transition-colors duration-300"
+                :class="isDragging ? 'ring-4 ring-amber-400 dark:ring-amber-300 ring-opacity-50 shadow-2xl' : 'hover:shadow-xl'">
                 <img :src="user.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user.name)}`"
                     :alt="user.name" class="h-full w-full object-cover pointer-events-none select-none"
                     draggable="false" />
@@ -57,7 +57,7 @@ const getInitial = (name: string) => name?.charAt(0).toUpperCase() ?? '?'
 
             <!-- Bubble Notes + Song -->
             <div v-if="user.notes || user.profile_song"
-                class="pointer-events-none absolute -left-3 bottom-full z-10 mb-2 max-w-[120px] rounded-xl border border-gray-200 bg-white/80 px-3 text-xs font-medium break-words whitespace-normal shadow-lg backdrop-blur-lg text-neutral-800"
+                class="pointer-events-none absolute -left-3 bottom-full z-10 mb-2 max-w-[120px] rounded-xl border border-stone-200 dark:border-stone-700 bg-white/80 dark:bg-stone-800/80 px-3 text-xs font-medium break-words whitespace-normal shadow-lg backdrop-blur-lg text-stone-800 dark:text-stone-100 transition-colors duration-300"
                 :class="isDragging ? 'opacity-75' : 'opacity-100'">
                 <!-- Notes -->
                 <p v-if="user.notes" class="py-2 text-center leading-tight break-words">
@@ -76,13 +76,13 @@ const getInitial = (name: string) => name?.charAt(0).toUpperCase() ?? '?'
 
                 <!-- Bubble tail -->
                 <span
-                    class="absolute -bottom-1 left-4 h-0 w-0 border-t-4 border-r-4 border-l-4 border-t-white/80 border-r-transparent border-l-transparent" />
+                    class="absolute -bottom-1 left-4 h-0 w-0 border-t-4 border-r-4 border-l-4 border-t-white/80 dark:border-t-stone-800/80 border-r-transparent border-l-transparent transition-colors duration-300" />
             </div>
         </div>
 
         <!-- Name label -->
         <span
-            class="pointer-events-none mt-2 rounded-full bg-black/30 px-2 py-1 text-center text-xs sm:text-sm font-medium text-white backdrop-blur-sm select-none">
+            class="pointer-events-none mt-2 rounded-full bg-black/30 dark:bg-stone-950/50 px-2 py-1 text-center text-xs sm:text-sm font-medium text-white backdrop-blur-sm select-none transition-colors duration-300">
             {{ user.name }}
         </span>
     </div>

@@ -179,10 +179,57 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+   html {
+    scroll-behavior: smooth;
   }
+
+  /* ✅ Dark mode (default) */
   body {
-    @apply bg-background text-foreground;
+    @apply bg-stone-950 text-stone-300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* ✅ Light mode — aktif saat html tidak punya class 'dark' */
+  html:not(.dark) body {
+    @apply bg-stone-50 text-stone-700;
+  }
+
+  /* ✅ Selection */
+  ::selection {
+    @apply bg-amber-400 text-stone-950;
+  }
+
+  /* ✅ Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-stone-900;
+  }
+  html:not(.dark) ::-webkit-scrollbar-track {
+    @apply bg-stone-200;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-stone-700 rounded-sm;
+  }
+  html:not(.dark) ::-webkit-scrollbar-thumb {
+    @apply bg-stone-400 rounded-sm;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-amber-400;
+  }
+}
+
+@layer components {
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950;
+  }
+
+  /* ✅ Light mode focus ring offset */
+  html:not(.dark) .focus-ring {
+    @apply focus-visible:ring-offset-stone-50;
   }
 }

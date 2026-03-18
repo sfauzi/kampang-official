@@ -240,12 +240,12 @@ useSeoMeta({
     <!-- Center Content -->
     <div
       class="relative z-10 flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-6 px-4 text-center pointer-events-none">
-      <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight drop-shadow-sm">
+      <h1 class="text-4xl sm:text-5xl font-bold text-stone-900 dark:text-stone-50 leading-tight drop-shadow-sm transition-colors duration-300">
         Selamat Datang di
-        <span class="text-blue-600 font-mansalva">Kampang Official</span>
+        <span class="text-amber-600 dark:text-amber-400 font-mansalva">Kampang Official</span>
       </h1>
 
-      <p class="text-gray-600 text-lg max-w-md drop-shadow-sm">
+      <p class="text-stone-600 dark:text-stone-400 text-lg max-w-md drop-shadow-sm transition-colors duration-300">
         Masuk dengan akun Google untuk mendapatkan notifikasi peluncuran.
       </p>
 
@@ -254,14 +254,14 @@ useSeoMeta({
 
         <!-- Loading -->
         <div v-if="isLoadingCountdown" class="flex justify-center">
-          <div class="w-6 h-6 rounded-full border-2 border-blue-300 border-t-blue-600 animate-spin" />
+          <div class="w-6 h-6 rounded-full border-2 border-amber-300 dark:border-amber-400 border-t-amber-600 dark:border-t-amber-300 animate-spin transition-colors duration-300" />
         </div>
 
         <!-- Launched -->
         <div v-else-if="isLaunched" class="flex flex-col items-center gap-2">
           <span
-            class="inline-flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-sm font-medium text-green-700 border border-green-200">
-            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block" />
+            class="inline-flex items-center gap-2 rounded-full bg-emerald-100 dark:bg-emerald-950 px-4 py-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 transition-colors duration-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse inline-block transition-colors duration-300" />
             Sudah Diluncurkan 🎉
           </span>
         </div>
@@ -273,51 +273,51 @@ useSeoMeta({
             <!-- Days -->
             <div v-if="countdownParts.days > 0" class="flex flex-col items-center">
               <div
-                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center">
-                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-gray-900 tabular-nums">
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 dark:bg-stone-900/80 backdrop-blur border border-stone-200 dark:border-stone-800 shadow-sm px-3 py-3 text-center transition-colors duration-300">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-stone-900 dark:text-stone-50 tabular-nums">
                   {{ pad(countdownParts.days) }}
                 </span>
               </div>
-              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Hari</span>
+              <span class="mt-1 text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide transition-colors duration-300">Hari</span>
             </div>
 
-            <span v-if="countdownParts.days > 0" class="text-2xl font-bold text-gray-400 mb-6">:</span>
+            <span v-if="countdownParts.days > 0" class="text-2xl font-bold text-stone-400 dark:text-stone-600 mb-6 transition-colors duration-300">:</span>
 
             <!-- Hours -->
             <div class="flex flex-col items-center">
               <div
-                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center">
-                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-gray-900 tabular-nums">
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 dark:bg-stone-900/80 backdrop-blur border border-stone-200 dark:border-stone-800 shadow-sm px-3 py-3 text-center transition-colors duration-300">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-stone-900 dark:text-stone-50 tabular-nums">
                   {{ pad(countdownParts.hours) }}
                 </span>
               </div>
-              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Jam</span>
+              <span class="mt-1 text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide transition-colors duration-300">Jam</span>
             </div>
 
-            <span class="text-2xl font-bold text-gray-400 mb-6">:</span>
+            <span class="text-2xl font-bold text-stone-400 dark:text-stone-600 mb-6 transition-colors duration-300">:</span>
 
             <!-- Minutes -->
             <div class="flex flex-col items-center">
               <div
-                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center">
-                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-gray-900 tabular-nums">
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 dark:bg-stone-900/80 backdrop-blur border border-stone-200 dark:border-stone-800 shadow-sm px-3 py-3 text-center transition-colors duration-300">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-stone-900 dark:text-stone-50 tabular-nums">
                   {{ pad(countdownParts.minutes) }}
                 </span>
               </div>
-              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Menit</span>
+              <span class="mt-1 text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide transition-colors duration-300">Menit</span>
             </div>
 
-            <span class="text-2xl font-bold text-gray-400 mb-6">:</span>
+            <span class="text-2xl font-bold text-stone-400 dark:text-stone-600 mb-6 transition-colors duration-300">:</span>
 
             <!-- Seconds -->
             <div class="flex flex-col items-center">
               <div
-                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 backdrop-blur border border-gray-200 shadow-sm px-3 py-3 text-center transition-all duration-300">
-                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-blue-600 tabular-nums">
+                class="min-w-[60px] sm:min-w-[72px] rounded-xl bg-white/80 dark:bg-stone-900/80 backdrop-blur border border-stone-200 dark:border-stone-800 shadow-sm px-3 py-3 text-center transition-all duration-300">
+                <span class="text-3xl sm:text-4xl font-bold font-mansalva text-amber-600 dark:text-amber-400 tabular-nums">
                   {{ pad(countdownParts.seconds) }}
                 </span>
               </div>
-              <span class="mt-1 text-xs text-gray-400 uppercase tracking-wide">Detik</span>
+              <span class="mt-1 text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide transition-colors duration-300">Detik</span>
             </div>
           </div>
         </div>
@@ -325,7 +325,7 @@ useSeoMeta({
 
       <template v-if="!isAuthenticated">
         <button
-          class="pointer-events-auto cursor-pointer flex items-center gap-3 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl text-base font-medium shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200"
+          class="pointer-events-auto cursor-pointer flex items-center gap-3 px-6 py-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-base font-medium shadow-sm hover:shadow-md hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-200"
           @click="loginWithGoogle">
           <Icon name="logos:google-icon" class="w-5 h-5" />
           Login dengan Google
@@ -334,7 +334,7 @@ useSeoMeta({
 
       <template v-else>
         <NuxtLink to="/profile"
-          class="pointer-events-auto px-6 py-3 bg-blue-600 text-white rounded-xl text-base font-medium hover:bg-blue-700 transition">
+          class="pointer-events-auto px-6 py-3 bg-amber-600 dark:bg-amber-700 text-white rounded-xl text-base font-medium hover:bg-amber-700 dark:hover:bg-amber-600 transition">
           Lihat Profil Saya →
         </NuxtLink>
       </template>
