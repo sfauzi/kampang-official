@@ -25,8 +25,7 @@ export const useAuth = () => {
     window.location.href = `${config.public.apiBase}/auth/google/redirect`
   }
 
-  const fetchUser = async (): Promise<boolean> => {
-    // Ambil token — prioritaskan useState, fallback ke localStorage
+  const fetchUser = async (force = false): Promise<boolean> => {
     const currentToken = token.value ?? tokenStorage.get()
 
     if (!currentToken) {
@@ -34,15 +33,21 @@ export const useAuth = () => {
       return false
     }
 
-    // Pastikan useState sinkron
     if (!token.value) {
       token.value = currentToken
       isAuthenticated.value = true
     }
 
+    // ✅ TAMBAHAN: cache busting — tambah timestamp agar tidak kena browser cache
     try {
       const data = await $fetch<User>(`${config.public.apiBase}/api/user`, {
-        headers: buildApiHeaders(currentToken),
+        headers: {
+          ...buildApiHeaders(currentToken),
+          'Cache-Control': 'no-cache',   // ✅ paksa fresh dari server
+          'Pragma': 'no-cache',
+        },
+        // ✅ tambah query param timestamp untuk bust CDN/proxy cache
+        query: force ? { _t: Date.now() } : {},
       })
       user.value = data
       isAuthenticated.value = true
