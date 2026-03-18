@@ -135,6 +135,8 @@ const saveNotes = async () => {
   }
 }
 
+const toast = useToast()
+
 </script>
 
 <template>
@@ -143,12 +145,14 @@ const saveNotes = async () => {
 
       <!-- Loading state -->
       <div v-if="!user" class="flex flex-col justify-center items-center h-64 gap-3">
-        <div class="w-10 h-10 rounded-full border-4 border-amber-200 dark:border-amber-300 border-t-amber-600 dark:border-t-amber-400 animate-spin" />
+        <div
+          class="w-10 h-10 rounded-full border-4 border-amber-200 dark:border-amber-300 border-t-amber-600 dark:border-t-amber-400 animate-spin" />
         <p class="text-sm text-stone-400 dark:text-stone-500">Memuat data profil...</p>
       </div>
 
       <!-- Profile card -->
-      <div v-else class="bg-white dark:bg-stone-900 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-800 overflow-hidden transition-colors duration-300">
+      <div v-else
+        class="bg-white dark:bg-stone-900 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-800 overflow-hidden transition-colors duration-300">
 
         <div class="h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700" />
 
@@ -170,7 +174,8 @@ const saveNotes = async () => {
                 <template v-if="!isEditingNotes">
                   <span v-if="user.notes" class="block">{{ user.notes }}</span>
                   <span v-else class="block text-stone-400 dark:text-stone-500 italic">Add a note...</span>
-                  <button @click="startEditNotes" class="cursor-pointer mt-1 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition">
+                  <button @click="startEditNotes"
+                    class="cursor-pointer mt-1 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition">
                     <Icon name="heroicons:pencil" class="w-3 h-3" />
                   </button>
                 </template>
@@ -234,15 +239,21 @@ const saveNotes = async () => {
                 <Icon name="heroicons:music-note" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Lagu Favorit
               </h2>
-              <button @click="showSongModal = true"
-                class="cursor-pointer flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950 transition">
-                <Icon name="heroicons:plus" class="w-4 h-4" />
-                Pilih Lagu
-              </button>
+              <div @click="toast.info('Fitur ini masih dalam tahap pengembangan 🚧')"
+                class="cursor-not-allowed inline-flex" title="Masih dalam pengembangan">
+                <button disabled class="pointer-events-none flex items-center gap-2 px-4 py-2 text-sm font-medium
+           text-stone-400 dark:text-stone-600 border border-stone-200 dark:border-stone-700
+           rounded-lg opacity-50 transition select-none">
+                  <Icon name="heroicons:plus" class="w-4 h-4" />
+                  Pilih Lagu
+                </button>
+                <!-- @click="showSongModal = true" -->
+              </div>
             </div>
 
             <!-- Error Message -->
-            <div v-if="errorMessage" class="mb-4 p-3 bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 transition-colors duration-300">
+            <div v-if="errorMessage"
+              class="mb-4 p-3 bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 transition-colors duration-300">
               {{ errorMessage }}
             </div>
 
@@ -257,7 +268,8 @@ const saveNotes = async () => {
               class="p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-stone-800 dark:to-stone-800 rounded-lg border border-emerald-200 dark:border-stone-700 transition-colors duration-300">
               <div class="flex gap-4">
                 <!-- Album Cover -->
-                <div class="w-20 h-20 rounded-lg bg-stone-200 dark:bg-stone-700 flex-shrink-0 transition-colors duration-300">
+                <div
+                  class="w-20 h-20 rounded-lg bg-stone-200 dark:bg-stone-700 flex-shrink-0 transition-colors duration-300">
                   <img v-if="profileSong.song_image" :src="profileSong.song_image" :alt="profileSong.song_title"
                     class="w-full h-full object-cover rounded-lg" />
                   <Icon v-else name="heroicons:music-note" class="w-10 h-10 text-stone-400 dark:text-stone-500 m-2.5" />
@@ -294,10 +306,13 @@ const saveNotes = async () => {
               </div>
             </div>
 
-            <div v-else class="p-6 text-center border border-stone-300 dark:border-stone-700 border-dashed rounded-lg bg-stone-50 dark:bg-stone-800 transition-colors duration-300">
+            <div v-else
+              class="p-6 text-center border border-stone-300 dark:border-stone-700 border-dashed rounded-lg bg-stone-50 dark:bg-stone-800 transition-colors duration-300">
               <Icon name="heroicons:music-note" class="w-8 h-8 text-stone-400 dark:text-stone-500 mx-auto mb-2" />
               <p class="text-stone-600 dark:text-stone-400 text-sm">Belum ada lagu favorit yang dipilih</p>
-              <p class="text-stone-500 dark:text-stone-500 text-xs mt-1">Pilih lagu dari Spotify untuk menampilkannya di profil Anda</p>
+              <p class="text-stone-500 dark:text-stone-500 text-xs mt-1">Pilih lagu dari Spotify untuk menampilkannya di
+                profil
+                Anda</p>
             </div>
           </div>
 
@@ -324,7 +339,8 @@ const saveNotes = async () => {
     <div v-if="showSpotifyModal"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-2 backdrop-blur-sm"
       @click.self="showSpotifyModal = false">
-      <div class="relative w-full max-w-md rounded-2xl bg-white dark:bg-stone-900 p-4 shadow-xl transition-colors duration-300">
+      <div
+        class="relative w-full max-w-md rounded-2xl bg-white dark:bg-stone-900 p-4 shadow-xl transition-colors duration-300">
         <!-- Close Button -->
         <button @click="showSpotifyModal = false"
           class="absolute cursor-pointer top-4 right-4 z-10 flex items-center justify-center w-9 h-9 rounded-full bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-300 shadow-md backdrop-blur-sm transition-all duration-200 hover:bg-stone-100 dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-stone-100">
