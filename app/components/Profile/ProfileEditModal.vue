@@ -1,3 +1,4 @@
+<!-- components/Profile/ProfileEditModal.vue -->
 <script lang="ts" setup>
 import type { User } from '~/types/user'
 
@@ -15,18 +16,17 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const { updateProfile } = useAuth()
+const toast = useToast()  // ← tambahkan ini
 
 const formData = ref({
   name: '',
   description: '',
   address: '',
-  // notes: '',
   avatar: null as File | null,
 })
 
 const avatarPreview = ref<string | null>(null)
 const isLoading = ref(false)
-const errorMessage = ref('')
 
 watch(
   () => props.user,
@@ -36,11 +36,9 @@ watch(
         name: newUser.name,
         description: newUser.description || '',
         address: newUser.address || '',
-        // notes: newUser.notes || '',
         avatar: null,
       }
       avatarPreview.value = newUser.avatar_url
-      errorMessage.value = ''
     }
   },
   { immediate: true }
@@ -52,7 +50,7 @@ const handleAvatarChange = (event: Event) => {
 
   if (file) {
     if (file.size > 2 * 1024 * 1024) {
-      errorMessage.value = 'Ukuran file tidak boleh lebih dari 2MB'
+      toast.error('Ukuran file tidak boleh lebih dari 2MB')
       return
     }
 
@@ -67,28 +65,27 @@ const handleAvatarChange = (event: Event) => {
 
 const handleSubmit = async () => {
   if (!formData.value.name.trim()) {
-    errorMessage.value = 'Nama tidak boleh kosong'
+    toast.error('Nama tidak boleh kosong')
     return
   }
 
   isLoading.value = true
-  errorMessage.value = ''
 
   const success = await updateProfile({
     name: formData.value.name,
     description: formData.value.description || null,
     address: formData.value.address || null,
-    // notes: null,
     avatar: formData.value.avatar,
   })
 
   isLoading.value = false
 
   if (success) {
+    toast.success('Profil berhasil diperbarui!')
     emit('saved')
     emit('update:open', false)
   } else {
-    errorMessage.value = 'Gagal memperbarui profil'
+    toast.error('Gagal memperbarui profil. Coba lagi.')
   }
 }
 </script>
@@ -110,13 +107,7 @@ const handleSubmit = async () => {
         </button>
       </div>
 
-      <!-- Error Message -->
-      <div
-        v-if="errorMessage"
-        class="mb-4 p-3 bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 transition-colors duration-300"
-      >
-        {{ errorMessage }}
-      </div>
+      <!-- Error Message dihapus, diganti toast -->
 
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <!-- Avatar Upload -->
@@ -183,17 +174,6 @@ const handleSubmit = async () => {
           />
         </div>
 
-        <!-- Notes -->
-        <!-- <div>
-          <label class="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1 transition-colors duration-300">Catatan</label>
-          <textarea
-            v-model="formData.notes"
-            class="w-full px-4 py-2 border border-stone-300 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-50 placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 resize-none transition-colors duration-300"
-            placeholder="Catatan tambahan"
-            rows="2"
-          />
-        </div> -->
-
         <!-- Submit Button -->
         <button
           type="submit"
@@ -210,4 +190,3 @@ const handleSubmit = async () => {
     </div>
   </div>
 </template>
-
