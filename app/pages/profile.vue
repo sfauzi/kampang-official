@@ -49,18 +49,25 @@ watchEffect(() => {
 })
 
 onMounted(async () => {
-  // Plugin auth.client.ts sudah panggil init() + fetchUser() saat app load.
-  // onMounted di sini hanya sebagai safety net: kalau user masih null
-  // (misal navigasi sangat cepat sebelum plugin selesai), retry fetch.
-  if (!user.value) {
-    await fetchUser()
-  }
-  await loadProfileSong()
+  // Selalu force-fetch saat masuk page
+  await fetchUser(true)
+
+  // Load song + catat lastSongId awal
+  isLoadingProfileSong.value = true
+  profileSong.value = await getProfileSong()
+  lastSongId.value  = profileSong.value?.song_id ?? null
+  isLoadingProfileSong.value = false
+
+  startPolling()
+  document.addEventListener('visibilitychange', onVisibilityChange)
+  window.addEventListener('focus', onWindowFocus)
+  document.addEventListener('click', closeDropdownOnOutsideClick)
 })
 
 const loadProfileSong = async () => {
   isLoadingProfileSong.value = true
-  profileSong.value = await getProfileSong()
+  profileSong.value  = await getProfileSong()
+  lastSongId.value   = profileSong.value?.song_id ?? null
   isLoadingProfileSong.value = false
 }
 
@@ -72,7 +79,7 @@ const handleSongSelected = async (track: SpotifyTrack) => {
   isLoadingProfileSong.value = true
   const success = await setProfileSong(track)
   if (success) {
-    await loadProfileSong()
+    await loadProfileSong()   // ✅ lastSongId ikut terupdate
     errorMessage.value = ''
   } else {
     errorMessage.value = 'Gagal menyimpan lagu profile'
@@ -81,14 +88,12 @@ const handleSongSelected = async (track: SpotifyTrack) => {
 }
 
 const handleDeleteProfileSong = async () => {
-  if (!confirm('Apakah Anda yakin ingin menghapus lagu profile?')) {
-    return
-  }
+  if (!confirm('Apakah Anda yakin ingin menghapus lagu profile?')) return
 
   isLoadingProfileSong.value = true
   const success = await deleteProfileSong()
   if (success) {
-    await loadProfileSong()
+    await loadProfileSong()   // ✅ lastSongId ikut terupdate
     errorMessage.value = ''
   } else {
     errorMessage.value = 'Gagal menghapus lagu profile'
@@ -166,11 +171,10 @@ const closeDropdownOnOutsideClick = (e: MouseEvent) => {
   showAvatarDropdown.value = false
 }
 
-onMounted(() => {
-  document.addEventListener('click', closeDropdownOnOutsideClick)
-})
-
 onUnmounted(() => {
+  stopPolling()
+  document.removeEventListener('visibilitychange', onVisibilityChange)
+  window.removeEventListener('focus', onWindowFocus)
   document.removeEventListener('click', closeDropdownOnOutsideClick)
 })
 
@@ -233,6 +237,76 @@ const handleDeleteAvatar = async () => {
   } else {
     toast.error('Gagal menghapus foto profil.')
   }
+}
+
+// ─── Real-time sync lintas device ───────────────────────────────────────────
+const POLL_USER_MS       = 30_000   // user data: tiap 30 detik
+const POLL_SONG_MS       = 60_000   // profile song: tiap 60 detik (jarang berubah)
+
+let pollUserTimer: ReturnType<typeof setInterval> | null = null
+let pollSongTimer: ReturnType<typeof setInterval> | null = null
+
+// ── User polling ──
+const startUserPolling = () => {
+  if (pollUserTimer) return
+  pollUserTimer = setInterval(async () => {
+    await fetchUser(true)
+  }, POLL_USER_MS)
+}
+
+const stopUserPolling = () => {
+  if (pollUserTimer) { clearInterval(pollUserTimer); pollUserTimer = null }
+}
+
+// ── Song polling — hanya fetch jika song_id berubah ──
+const lastSongId = ref<string | null>(null)
+
+const checkProfileSong = async () => {
+  const fresh = await getProfileSong()
+
+  // ✅ Hanya update state jika data benar-benar berubah
+  const freshId = fresh?.song_id ?? null
+  if (freshId !== lastSongId.value) {
+    profileSong.value = fresh
+    lastSongId.value  = freshId
+  }
+}
+
+const startSongPolling = () => {
+  if (pollSongTimer) return
+  pollSongTimer = setInterval(checkProfileSong, POLL_SONG_MS)
+}
+
+const stopSongPolling = () => {
+  if (pollSongTimer) { clearInterval(pollSongTimer); pollSongTimer = null }
+}
+
+// ── Start / stop semua polling ──
+const startPolling = () => {
+  startUserPolling()
+  startSongPolling()
+}
+
+const stopPolling = () => {
+  stopUserPolling()
+  stopSongPolling()
+}
+
+// ── Visibility & focus handlers ──
+const onVisibilityChange = async () => {
+  if (document.visibilityState === 'visible') {
+    // Langsung fetch begitu tab aktif kembali
+    await fetchUser(true)
+    await checkProfileSong()
+    startPolling()
+  } else {
+    stopPolling()     // tab background → hemat resource
+  }
+}
+
+const onWindowFocus = async () => {
+  await fetchUser(true)
+  await checkProfileSong()
 }
 
 </script>

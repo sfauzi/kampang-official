@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import UserCircle from '~/components/Profile/UserCircle.vue'
 import SongModal from '~/components/SongModal.vue'
+import { onBeforeRouteLeave } from 'vue-router'
 
 
 interface ProfileSong {
@@ -212,6 +213,16 @@ const pad = (n: number) => String(n).padStart(2, '0')
 
 let usersInterval: ReturnType<typeof setInterval> | null = null
 
+const onVisibilityChange = async () => {
+  if (document.visibilityState === 'visible') {
+    await fetchUsers()   // ✅ langsung fetch saat tab kembali
+  }
+}
+
+const onWindowFocus = async () => {
+  await fetchUsers()     // ✅ backup: saat window kembali fokus
+}
+
 onMounted(async () => {
   init()
   await fetchUsers()
@@ -224,12 +235,25 @@ onMounted(async () => {
   countdownSyncInterval = setInterval(() => {
     fetchCountdown(false)
   }, 10000)
+
+  document.addEventListener('visibilitychange', onVisibilityChange)
+  window.addEventListener('focus', onWindowFocus)
 })
 
 onUnmounted(() => {
   if (countdownInterval) clearInterval(countdownInterval)
   if (usersInterval) clearInterval(usersInterval)
   if (countdownSyncInterval) clearInterval(countdownSyncInterval)
+
+  document.removeEventListener('visibilitychange', onVisibilityChange)
+  window.removeEventListener('focus', onWindowFocus)
+})
+
+onBeforeRouteLeave(async (to) => {
+  if (to.path === '/profile') {
+    const { fetchUser } = useAuth()
+    await fetchUser(true)   // ✅ force refresh dengan cache busting
+  }
 })
 
 useSeoMeta({
