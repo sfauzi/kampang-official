@@ -216,13 +216,13 @@ useSeoMeta({
 
   ogTitle: 'Berbagi Cerita, Pengalaman, dan Pemikiran',
   ogDescription: 'Kampang Official adalah platform dan blog modern yang memungkinkan pengguna untuk berbagi cerita, pengalaman, dan pemikiran. Dengan fitur-fitur inovatif dan antarmuka yang user-friendly, Kampang Official memberikan ruang bagi individu untuk mengekspresikan diri mereka tanpa batasan, sambil tetap menjaga privasi dan keamanan. Bergabunglah dengan komunitas kami dan temukan berbagai cerita menarik dari seluruh dunia!',
-  ogImage: 'https://kampang-official.vercel.app/logo-ko.png',
-  ogUrl: 'https://kampang-official.vercel.app',
+  ogImage: 'https://kampangofficial.vercel.app/logo-ko.png',
+  ogUrl: 'https://kampangofficial.vercel.app',
 
   twitterCard: 'summary_large_image',
   twitterTitle: 'Berbagi Cerita, Pengalaman, dan Pemikiran',
   twitterDescription: 'Kampang Official adalah platform dan blog modern yang memungkinkan pengguna untuk berbagi cerita, pengalaman, dan pemikiran. Dengan fitur-fitur inovatif dan antarmuka yang user-friendly, Kampang Official memberikan ruang bagi individu untuk mengekspresikan diri mereka tanpa batasan, sambil tetap menjaga privasi dan keamanan. Bergabunglah dengan komunitas kami dan temukan berbagai cerita menarik dari seluruh dunia!',
-  twitterImage: 'https://kampang-official.vercel.app/logo-ko.png',
+  twitterImage: 'https://kampangofficial.vercel.app/logo-ko.png',
 })
 
 </script>

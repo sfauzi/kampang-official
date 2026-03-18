@@ -63,11 +63,11 @@ export default defineNuxtConfig({
         },
         {
           property: 'og:url',
-          content: 'https://kampang-official.vercel.app',
+          content: 'https://kampangofficial.vercel.app',
         },
         {
           property: 'og:image',
-          content: 'https://kampang-official.vercel.app/logo-ko.png',
+          content: 'https://kampangofficial.vercel.app/logo-ko.png',
         },
 
         // Twitter
@@ -85,7 +85,7 @@ export default defineNuxtConfig({
         },
         {
           name: 'twitter:image',
-          content: 'https://kampang-official.vercel.app/logo-ko.png',
+          content: 'https://kampangofficial.vercel.app/logo-ko.png',
         },
       ],
     },
