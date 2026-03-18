@@ -75,7 +75,9 @@ const handleSubmit = async () => {
     name: formData.value.name,
     description: formData.value.description || null,
     address: formData.value.address || null,
-    avatar: formData.value.avatar,
+    // Kirim avatar hanya jika user memilih file baru
+    // undefined = tidak diubah, null = sengaja dihapus
+    avatar: formData.value.avatar ?? undefined,
   })
 
   isLoading.value = false

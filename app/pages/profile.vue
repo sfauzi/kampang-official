@@ -127,7 +127,6 @@ const saveNotes = async () => {
     description: user.value?.description || null,
     address: user.value?.address || null,
     notes: notesForm.value || null,
-    avatar: null,
   })
   if (success) {
     await fetchUser()
