@@ -57,7 +57,7 @@ const getInitial = (name: string) => name?.charAt(0).toUpperCase() ?? '?'
 
             <!-- Bubble Notes + Song -->
             <div v-if="user.notes || user.profile_song"
-                class="pointer-events-none absolute -left-3 bottom-full z-10 mb-2 max-w-[120px] rounded-xl border border-stone-200 dark:border-stone-700 bg-white/80 dark:bg-stone-800/80 px-3 text-xs font-medium break-words whitespace-normal shadow-lg backdrop-blur-lg text-stone-800 dark:text-stone-100 transition-colors duration-300"
+                class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full z-10 mb-2 min-w-[80px] max-w-[140px] rounded-xl border border-stone-200 dark:border-stone-700 bg-white/80 dark:bg-stone-800/80 px-3 text-xs font-medium shadow-lg backdrop-blur-lg text-stone-800 dark:text-stone-100 transition-colors duration-300"
                 :class="isDragging ? 'opacity-75' : 'opacity-100'">
                 <!-- Notes -->
                 <p v-if="user.notes" class="py-2 text-center leading-tight break-words">
@@ -78,7 +78,7 @@ const getInitial = (name: string) => name?.charAt(0).toUpperCase() ?? '?'
 
                 <!-- Bubble tail -->
                 <span
-                    class="absolute -bottom-1 left-4 h-0 w-0 border-t-4 border-r-4 border-l-4 border-t-white/80 dark:border-t-stone-800/80 border-r-transparent border-l-transparent transition-colors duration-300" />
+                    class="absolute -bottom-1 left-1/2 -translate-x-1/2 h-0 w-0 border-t-4 border-r-4 border-l-4 border-t-white/80 dark:border-t-stone-800/80 border-r-transparent border-l-transparent transition-colors duration-300" />
             </div>
         </div>
 
