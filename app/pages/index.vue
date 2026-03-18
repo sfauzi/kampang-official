@@ -44,19 +44,26 @@ let startY = 0
 const fetchUsers = async () => {
   try {
     const data = await $fetch<UserItem[]>(`${config.public.apiBase}/api/users/names`)
-    users.value = data
-    data.forEach((user) => {
-      userPositions.value.set(user.id, randomPos())
+
+    const map = new Map(users.value.map(u => [u.id, u]))
+
+    data.forEach((newUser) => {
+      const old = map.get(newUser.id)
+
+      if (old) {
+        // update data tanpa reset posisi
+        Object.assign(old, newUser)
+      } else {
+        // user baru → tambah + posisi random
+        users.value.push(newUser)
+        userPositions.value.set(newUser.id, randomPos())
+      }
     })
+
   } catch (err) {
     console.error('[index] fetchUsers error:', err)
   }
 }
-
-onMounted(async () => {
-  init()
-  await fetchUsers()
-})
 
 // ────────────────────────────────────────
 // Position helpers
@@ -199,14 +206,21 @@ const countdownParts = computed(() => {
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
+let usersInterval: ReturnType<typeof setInterval> | null = null
+
 onMounted(async () => {
   init()
   await fetchUsers()
   await fetchCountdown()
+
+  usersInterval = setInterval(() => {
+    fetchUsers()
+  }, 3000) // 3 detik
 })
 
 onUnmounted(() => {
   if (countdownInterval) clearInterval(countdownInterval)
+  if (usersInterval) clearInterval(usersInterval)
 })
 
 useSeoMeta({
