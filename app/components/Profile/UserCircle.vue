@@ -67,7 +67,9 @@ const getInitial = (name: string) => name?.charAt(0).toUpperCase() ?? '?'
                 <!-- Profile Song marquee -->
                 <div v-if="user.profile_song"
                     class="pointer-events-auto cursor-pointer overflow-hidden py-1.5 hover:opacity-80 transition-opacity"
-                    @click.stop="emit('opensong', user.id)">
+                    @click.stop="emit('opensong', user.id)"
+                    @touchstart.stop
+                    @touchend.stop="emit('opensong', user.id)">
                     <Marquee :speed="30" :pauseOnHover="true" >
                         <span class="inline-block font-bold"> 🎵 {{ user.profile_song.song_title }} - {{
                             user.profile_song.song_artist }} </span>
