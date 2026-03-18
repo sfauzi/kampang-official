@@ -26,7 +26,7 @@ interface UserPosition {
   left: string
 }
 
-const { isAuthenticated, loginWithGoogle, init } = useAuth()
+const { isAuthenticated, loginWithGoogle, user, init } = useAuth()
 const config = useRuntimeConfig()
 
 const users = ref<UserItem[]>([])
@@ -292,8 +292,12 @@ useSeoMeta({
         <span class="text-amber-600 dark:text-amber-400 font-mansalva">Kampang Official</span>
       </h1>
 
-      <p class="text-stone-600 dark:text-stone-400 text-lg max-w-md drop-shadow-sm transition-colors duration-300">
+      <p v-if="!isAuthenticated" class="text-stone-600 dark:text-stone-400 text-lg max-w-md drop-shadow-sm transition-colors duration-300">
         Masuk dengan akun Google untuk mendapatkan notifikasi peluncuran.
+      </p>
+
+      <p v-else class="text-stone-600 dark:text-stone-400 text-lg max-w-md drop-shadow-sm transition-colors duration-300">
+        Terima kasih telah masuk <span class="font-semibold text-amber-600 dark:text-amber-400 font-mansalva">{{ user?.name }}</span>! Nantikan peluncuran resmi kami.
       </p>
 
       <!-- Countdown Timer -->
