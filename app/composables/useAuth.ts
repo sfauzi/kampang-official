@@ -90,6 +90,9 @@ export const useAuth = () => {
         formData.append('avatar', data.avatar)
       }
 
+            if (data.avatar === null) {
+        formData.append('remove_avatar', '1')
+      }
       const response = await $fetch<User>(
         `${config.public.apiBase}/api/user/update`,
         {

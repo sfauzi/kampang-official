@@ -135,7 +135,106 @@ const saveNotes = async () => {
   }
 }
 
+const { confirm } = useConfirm()
 const toast = useToast()
+
+const handleLogout = async () => {
+  const ok = await confirm({
+    title: 'Keluar dari akun?',
+    message: 'Kamu akan keluar dari sesi ini. Pastikan kamu sudah menyimpan semua perubahan.',
+    confirmText: 'Ya, logout',
+    cancelText: 'Batal',
+    type: 'danger',
+  })
+
+  if (ok) {
+    await logout()
+    toast.success('Berhasil logout. Sampai jumpa!')
+  }
+}
+
+// --- Avatar ---
+const avatarInput = ref<HTMLInputElement | null>(null)
+const showAvatarDropdown = ref(false)
+
+
+const toggleAvatarDropdown = () => {
+  showAvatarDropdown.value = !showAvatarDropdown.value
+}
+
+// Tutup dropdown saat klik di luar
+const closeDropdownOnOutsideClick = (e: MouseEvent) => {
+  showAvatarDropdown.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', closeDropdownOnOutsideClick)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeDropdownOnOutsideClick)
+})
+
+const triggerAvatarInput = () => {
+  showAvatarDropdown.value = false
+  avatarInput.value?.click()
+}
+
+const onAvatarSelected = async (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+
+  if (file.size > 2 * 1024 * 1024) {
+    toast.error('Ukuran file tidak boleh lebih dari 2MB')
+    return
+  }
+
+  const success = await updateProfile({
+    name: user.value?.name ?? '',
+    description: user.value?.description,
+    address: user.value?.address,
+    notes: user.value?.notes,
+    avatar: file,
+  })
+
+  if (success) {
+    await fetchUser()
+    toast.success('Foto profil berhasil diubah.')
+  } else {
+    toast.error('Gagal mengupload foto profil.')
+  }
+
+  if (avatarInput.value) avatarInput.value.value = ''
+}
+  
+const handleDeleteAvatar = async () => {
+  showAvatarDropdown.value = false
+
+  const confirmed = await confirm({
+    title: 'Hapus foto profil?',
+    message: 'Foto profil kamu akan dihapus permanen.',
+    confirmText: 'Ya, Hapus',
+    cancelText: 'Batal',
+    type: 'danger',
+  })
+
+  if (!confirmed) return
+
+  const success = await updateProfile({
+    name: user.value?.name ?? '',
+    description: user.value?.description,
+    address: user.value?.address,
+    notes: user.value?.notes,
+    avatar: null,
+  })
+
+  if (success) {
+    await fetchUser()
+    toast.success('Foto profil berhasil dihapus.')
+  } else {
+    toast.error('Gagal menghapus foto profil.')
+  }
+}
 
 </script>
 
@@ -159,12 +258,78 @@ const toast = useToast()
         <div class="px-8 pb-8 -mt-12">
           <div class="flex items-end justify-between">
             <div class="relative">
-              <NuxtImg v-if="user.avatar_url" :src="user.avatar_url" :alt="user.name"
-                class="w-24 h-24 rounded-2xl border-4 border-white shadow-md object-cover" />
-              <div v-else
-                class="w-24 h-24 rounded-2xl border-4 border-stone-50 dark:border-stone-900 shadow-md bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 flex items-center justify-center">
-                <span class="text-white text-2xl font-bold">{{ initials }}</span>
+              <!-- Avatar clickable -->
+              <div class="relative group cursor-pointer" @click.stop="toggleAvatarDropdown">
+                <NuxtImg v-if="user.avatar_url" :src="user.avatar_url" :alt="user.name"
+                  class="w-24 h-24 rounded-2xl border-4 border-white dark:border-stone-800 shadow-md object-cover" />
+                <div v-else
+                  class="w-24 h-24 rounded-2xl border-4 border-stone-50 dark:border-stone-900 shadow-md bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 flex items-center justify-center">
+                  <span class="text-white text-2xl font-bold">{{ initials }}</span>
+                </div>
+
+                <!-- Hover overlay -->
+                <div
+                  class="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+
+                <!-- Badge edit kecil -->
+                <div
+                  class="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full border-2 border-white dark:border-stone-900 flex items-center justify-center shadow">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                      d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 2.828L11.828 15.828a4 4 0 01-1.414.828l-3 1 1-3a4 4 0 01.828-1.414z" />
+                  </svg>
+                </div>
               </div>
+
+              <!-- Dropdown menu -->
+              <Transition enter-active-class="transition duration-150 ease-out"
+                enter-from-class="opacity-0 scale-95 -translate-y-1"
+                enter-to-class="opacity-100 scale-100 translate-y-0"
+                leave-active-class="transition duration-100 ease-in"
+                leave-from-class="opacity-100 scale-100 translate-y-0"
+                leave-to-class="opacity-0 scale-95 -translate-y-1">
+                <div v-if="showAvatarDropdown"
+                  class="absolute left-0 top-full mt-2 w-44 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg z-50 overflow-hidden">
+                  <!-- Ganti foto -->
+                  <button type="button" @click="triggerAvatarInput"
+                    class="w-full cursor-pointer flex items-center gap-2.5 px-4 py-2.5 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-500" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {{ user.avatar_url ? 'Ganti Foto' : 'Upload Foto' }}
+                  </button>
+
+                  <!-- Divider + Hapus (hanya jika ada avatar) -->
+                  <template v-if="user.avatar_url">
+                    <div class="border-t border-stone-100 dark:border-stone-800" />
+                    <button type="button" @click="handleDeleteAvatar"
+                      class="w-full cursor-pointer flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Hapus Foto
+                    </button>
+                  </template>
+                </div>
+              </Transition>
+
+              <!-- Hidden file input -->
+              <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="onAvatarSelected" />
 
               <!-- Bubble Chat Notes -->
               <div
@@ -173,7 +338,7 @@ const toast = useToast()
                 <!-- Mode View -->
                 <template v-if="!isEditingNotes">
                   <span v-if="user.notes" class="block">{{ user.notes }}</span>
-                  <span v-else class="block text-stone-400 dark:text-stone-500 italic">Add a note...</span>
+                  <span v-else class="block text-stone-400 dark:text-stone-500 italic">Apa yang kamu pikirkan?...</span>
                   <button @click="startEditNotes"
                     class="cursor-pointer mt-1 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition">
                     <Icon name="heroicons:pencil" class="w-3 h-3" />
@@ -187,11 +352,11 @@ const toast = useToast()
                     placeholder="Tulis catatan..." autofocus />
                   <div class="mt-1 flex justify-end gap-1">
                     <button @click="saveNotes"
-                      class="rounded bg-emerald-500 dark:bg-emerald-600 px-2 py-0.5 text-xs text-white hover:bg-emerald-600 dark:hover:bg-emerald-700 transition">
+                      class="rounded cursor-pointer bg-emerald-500 dark:bg-emerald-600 px-2 py-0.5 text-xs text-white hover:bg-emerald-600 dark:hover:bg-emerald-700 transition">
                       Save
                     </button>
                     <button @click="cancelEditNotes"
-                      class="rounded bg-stone-300 dark:bg-stone-600 text-stone-900 dark:text-stone-100 px-2 py-0.5 text-xs hover:bg-stone-400 dark:hover:bg-stone-500 transition">
+                      class="rounded cursor-pointer bg-stone-300 dark:bg-stone-600 text-stone-900 dark:text-stone-100 px-2 py-0.5 text-xs hover:bg-stone-400 dark:hover:bg-stone-500 transition">
                       Cancel
                     </button>
                   </div>
@@ -319,10 +484,11 @@ const toast = useToast()
           <hr class="my-6 border-stone-200 dark:border-stone-800" />
 
           <!-- Logout Button -->
-          <button @click="logout"
+          <button @click="handleLogout"
             class="w-full cursor-pointer flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-50 dark:hover:bg-red-950 transition">
             <Icon name="heroicons:arrow-right-on-rectangle" class="w-4 h-4" />
             Logout
+            <!-- @click="logout"  -->
           </button>
 
         </div>
