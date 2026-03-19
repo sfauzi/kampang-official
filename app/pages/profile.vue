@@ -6,7 +6,7 @@ import ProfileSongModal from '~/components/Profile/ProfileSongModal.vue'
 import type { ProfileSong, SpotifyTrack } from '~/types/user'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'dashboard',
   middleware: 'auth',
 })
 
@@ -323,7 +323,7 @@ const randomText = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-stone-50 dark:bg-stone-950 py-12 px-4 transition-colors duration-300">
+  <div class="min-h-screen bg-stone-50 dark:bg-stone-950 py-3 px-0.5 transition-colors duration-300">
     <div class="max-w-2xl mx-auto">
 
       <!-- Loading state -->
