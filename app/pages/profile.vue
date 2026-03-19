@@ -309,6 +309,17 @@ const onWindowFocus = async () => {
   await checkProfileSong()
 }
 
+const texts = [
+  "Apa yang kamu pikirkan?...",
+  "Tulis sesuatu di sini...",
+  "Bagikan cerita kamu hari ini...",
+  "Lagi mikirin apa?",
+  "Ceritakan sesuatu ke dunia...",
+]
+
+const randomText = computed(() => {
+  return texts[Math.floor(Math.random() * texts.length)]
+})
 </script>
 
 <template>
@@ -327,8 +338,8 @@ const onWindowFocus = async () => {
         class="bg-white dark:bg-stone-900 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-800 overflow-hidden transition-colors duration-300">
 
         <div class="relative h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700">
-            <button
-                @click="$router.back()"
+            <NuxtLink to="/"
+                
                 class="absolute cursor-pointer top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
                       bg-white/20 hover:bg-white/30 active:bg-white/40
                       text-white text-sm font-medium
@@ -340,7 +351,7 @@ const onWindowFocus = async () => {
                     <path d="M19 12H5M12 5l-7 7 7 7"/>
                 </svg>
                 Kembali
-            </button>
+            </NuxtLink >
         </div>
         <!-- <div class="h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700" /> -->
 
@@ -427,7 +438,7 @@ const onWindowFocus = async () => {
                 <!-- Mode View -->
                 <template v-if="!isEditingNotes">
                   <span v-if="user.notes" class="block">{{ user.notes }}</span>
-                  <span v-else class="block text-stone-400 dark:text-stone-500 italic">Apa yang kamu pikirkan?...</span>
+                  <span v-else class="block text-stone-400 dark:text-stone-500 italic"> {{ randomText }}</span>
                   <button @click="startEditNotes"
                     class="cursor-pointer mt-1 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition">
                     <Icon name="heroicons:pencil" class="w-3 h-3" />
