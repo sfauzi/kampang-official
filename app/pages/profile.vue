@@ -338,8 +338,8 @@ const randomText = computed(() => {
         class="bg-white dark:bg-stone-900 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-800 overflow-hidden transition-colors duration-300">
 
         <div class="relative h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700">
-            <button
-                @click="$router.back()"
+            <NuxtLink to="/"
+                
                 class="absolute cursor-pointer top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
                       bg-white/20 hover:bg-white/30 active:bg-white/40
                       text-white text-sm font-medium
@@ -351,7 +351,7 @@ const randomText = computed(() => {
                     <path d="M19 12H5M12 5l-7 7 7 7"/>
                 </svg>
                 Kembali
-            </button>
+            </NuxtLink >
         </div>
         <!-- <div class="h-28 bg-gradient-to-r from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700" /> -->
 
