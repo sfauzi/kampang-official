@@ -193,7 +193,8 @@
 
   /* ✅ Light mode — aktif saat html tidak punya class 'dark' */
   html:not(.dark) body {
-    @apply bg-stone-50 text-stone-700;
+    @apply text-stone-700;
+    background-color: #FAFAFA;
   }
 
   /* ✅ Selection */
