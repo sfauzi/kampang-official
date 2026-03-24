@@ -6,7 +6,7 @@ const socials = [
 </script>
 
 <template>
-  <footer class="border-t border-stone-300 dark:border-stone-800 mt-10 max-w-6xl mx-auto px-6 sm:px-6 py-6 transition-colors duration-300">
+  <footer class="border-t border-stone-300 dark:border-stone-800 mt-10 max-w-6xl mx-auto px-6 sm:px-6 py-6 transition-colors duration-300 pb-24 lg:pb-0">
     <div class="max-w-6xl mx-auto px-4 py-6">
       <div
         class="flex flex-col items-center text-center gap-4 
