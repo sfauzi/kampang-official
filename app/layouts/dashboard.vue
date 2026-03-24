@@ -22,9 +22,9 @@
     <BaseFooter />
 
     <!-- Theme Toggle -->
-    <div class="fixed top-4 right-4 lg:right-12 z-50">
+    <!-- <div class="fixed top-4 right-4 lg:right-12 z-50">
       <BaseThemeToggle />
-    </div>
+    </div> -->
 
     <BaseToast />
     <BaseConfirm />

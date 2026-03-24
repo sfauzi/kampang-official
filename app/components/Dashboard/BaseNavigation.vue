@@ -124,6 +124,8 @@
           />
         </button>
 
+        <BaseThemeToggle />
+
         <!-- Divider -->
         <div class="w-px h-6 mx-1" :class="isDark ? 'bg-stone-700' : 'bg-stone-200'" />
 
