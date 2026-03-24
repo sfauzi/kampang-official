@@ -299,39 +299,52 @@ function handleProfileClick() {
             </div>
           </div>
 
-          <!-- Members tab -->
-          <div v-else-if="activeTab === 'members'">
-            <div class="bg-white dark:bg-[#181818] rounded-2xl border border-gray-100 dark:border-neutral-800 overflow-hidden shadow-sm">
+            <!-- Members tab -->
+            <div v-else-if="activeTab === 'members'">
+            <div v-if="!isAuthenticated" class="flex flex-col items-center justify-center py-20 gap-3 bg-white dark:bg-[#181818] rounded-2xl border border-gray-100 dark:border-neutral-800">
+              <div class="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-[#101010] flex items-center justify-center">
+              <Icon name="heroicons:users" class="w-7 h-7 text-gray-300 dark:text-neutral-700" />
+              </div>
+              <p class="text-sm text-gray-400">Silakan login untuk melihat anggota grup.</p>
+              <button
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition mt-1"
+              @click="() => { toast.info('Silakan login terlebih dahulu'); openLoginModal() }"
+              >
+              <Icon name="heroicons:arrow-right-on-rectangle" class="w-3.5 h-3.5" />
+              Login
+              </button>
+            </div>
+            <div v-else class="bg-white dark:bg-[#181818] rounded-2xl border border-gray-100 dark:border-neutral-800 overflow-hidden shadow-sm">
               <ul class="divide-y divide-gray-100 dark:divide-neutral-800">
-                <li
-                  v-for="member in members"
-                  :key="member.id"
-                  class="flex items-center gap-3 px-5 py-3.5"
-                >
-                  <img
-                    :src="member.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user.name)}`"
-                    class="w-10 h-10 rounded-full object-cover shrink-0"
+              <li
+                v-for="member in members"
+                :key="member.id"
+                class="flex items-center gap-3 px-5 py-3.5"
+              >
+                <img
+                :src="member.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(member.name)}`"
+                class="w-10 h-10 rounded-full object-cover shrink-0"
+                />
+                <div class="flex-1 min-w-0">
+                <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">{{ member.name }}</p>
+                <p class="text-xs text-gray-400 capitalize flex items-center gap-1 mt-0.5">
+                  <Icon
+                  :name="member.pivot?.role === 'owner' ? 'heroicons:crown' : member.pivot?.role === 'admin' ? 'heroicons:bolt' : 'heroicons:user'"
+                  class="w-3 h-3"
                   />
-                  <div class="flex-1 min-w-0">
-                    <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">{{ member.name }}</p>
-                    <p class="text-xs text-gray-400 capitalize flex items-center gap-1 mt-0.5">
-                      <Icon
-                        :name="member.pivot?.role === 'owner' ? 'heroicons:crown' : member.pivot?.role === 'admin' ? 'heroicons:bolt' : 'heroicons:user'"
-                        class="w-3 h-3"
-                      />
-                      {{ member.pivot?.role ?? 'member' }}
-                    </p>
-                  </div>
-                  <div v-if="isAdmin && member.id !== user?.id">
-                    <button
-                      class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 text-red-500 dark:text-red-400 text-xs font-semibold transition border border-red-200 dark:border-red-800/50"
-                      @click="handleBanMember(member.id)"
-                    >
-                      <Icon name="heroicons:no-symbol" class="w-3.5 h-3.5" />
-                      Ban
-                    </button>
-                  </div>
-                </li>
+                  {{ member.pivot?.role ?? 'member' }}
+                </p>
+                </div>
+                <div v-if="isAdmin && member.id !== user?.id">
+                <button
+                  class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 text-red-500 dark:text-red-400 text-xs font-semibold transition border border-red-200 dark:border-red-800/50"
+                  @click="handleBanMember(member.id)"
+                >
+                  <Icon name="heroicons:no-symbol" class="w-3.5 h-3.5" />
+                  Ban
+                </button>
+                </div>
+              </li>
               </ul>
             </div>
           </div>
