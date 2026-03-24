@@ -358,7 +358,7 @@ const handleSubmit = async () => {
                 @click="toggleRemoval(c.id)"
               >
                 <img
-                  :src="c.avatar ?? '/default-avatar.png'"
+                  :src="c.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(c.name)}`"
                   class="w-8 h-8 rounded-full object-cover shrink-0 transition"
                   :class="isMarkedForRemoval(c.id) ? 'opacity-50' : ''"
                 />
@@ -386,7 +386,7 @@ const handleSubmit = async () => {
 
           <!-- Creator info -->
           <div class="flex items-center gap-3 p-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
-            <img :src="album.creator?.avatar ?? '/default-avatar.png'" class="w-8 h-8 rounded-full object-cover shrink-0" />
+            <img :src="album.creator?.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(album.creator?.name)}`" class="w-8 h-8 rounded-full object-cover shrink-0" />
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
                 {{ album.creator?.name }}
@@ -422,7 +422,7 @@ const handleSubmit = async () => {
                 :class="isInPending(u.id) ? 'bg-amber-500/5 ring-1 ring-amber-500/30' : ''"
                 @click="togglePending({ id: u.id, name: u.name, avatar: u.avatar })"
               >
-                <img :src="u.avatar ?? '/default-avatar.png'" class="w-8 h-8 rounded-full object-cover shrink-0" />
+                <img :src="u.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(u.name)}`" class="w-8 h-8 rounded-full object-cover shrink-0" />
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ u.name }}</p>
                   <p v-if="u.notes" class="text-xs text-gray-400 truncate">{{ u.notes }}</p>
@@ -441,7 +441,7 @@ const handleSubmit = async () => {
                 :key="c.id"
                 class="flex items-center gap-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full pl-1.5 pr-2 py-0.5"
               >
-                <img :src="c.avatar ?? '/default-avatar.png'" class="w-5 h-5 rounded-full object-cover" />
+                <img :src="c.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(c.name)}`" class="w-5 h-5 rounded-full object-cover" />
                 <span class="text-xs font-medium">{{ c.name }}</span>
                 <button
                   type="button"

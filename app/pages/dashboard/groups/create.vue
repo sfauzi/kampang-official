@@ -334,7 +334,7 @@ const privacyOptions = [
                 :class="isSelected(u.id) ? 'bg-amber-500/5 ring-1 ring-amber-500/30' : ''"
                 @click="toggleMember({ id: u.id, name: u.name, avatar: u.avatar })"
               >
-                <img :src="u.avatar ?? '/default-avatar.png'" class="w-8 h-8 rounded-full object-cover shrink-0" />
+                <img :src="u.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(u.name)}`" class="w-8 h-8 rounded-full object-cover shrink-0" />
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ u.name }}</p>
                   <p v-if="u.notes" class="text-xs text-gray-400 truncate">{{ u.notes }}</p>
@@ -357,7 +357,7 @@ const privacyOptions = [
                 :key="u.id"
                 class="flex items-center gap-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full pl-1.5 pr-2 py-0.5"
               >
-                <img :src="u.avatar ?? '/default-avatar.png'" class="w-5 h-5 rounded-full object-cover" />
+                <img :src="u.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(u.name)}`" class="w-5 h-5 rounded-full object-cover" />
                 <span class="text-xs font-medium">{{ u.name }}</span>
                 <button
                   type="button"

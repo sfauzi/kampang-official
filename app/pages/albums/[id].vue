@@ -199,7 +199,7 @@ const handleInvite = async () => {
             :key="c.id"
             class="flex items-center gap-2 bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 rounded-full pl-1 pr-3 py-1"
           >
-            <img :src="c.avatar ?? '/default-avatar.png'" class="w-6 h-6 rounded-full object-cover" />
+            <img :src="c.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(c.name)}`" class="w-6 h-6 rounded-full object-cover" />
             <span class="text-xs font-medium text-gray-700 dark:text-gray-200">{{ c.name }}</span>
             <button
               v-if="isCreator"

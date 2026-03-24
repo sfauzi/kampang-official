@@ -56,7 +56,7 @@ const stats = computed(() => [
     <!-- Welcome -->
     <div class="flex items-center gap-4 mb-8 animate-[fadeIn_0.4s_ease_forwards]">
       <img
-        :src="user?.avatar_url ?? '/default-avatar.png'"
+        :src="user?.avatar_url ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user?.name)}`"
         class="w-14 h-14 rounded-full object-cover ring-2 ring-amber-500/30 shrink-0"
       />
       <div>

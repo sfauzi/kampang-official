@@ -212,7 +212,7 @@ function handleProfileClick() {
         <!-- User + date -->
         <div class="flex items-center gap-3 p-4 pb-3">
           <img
-            :src="m.user?.avatar ?? '/default-avatar.png'"
+            :src="m.user?.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(m.user?.name)}`"
             class="w-10 h-10 rounded-full object-cover ring-2 ring-brand/20"
           />
           <div class="flex-1 min-w-0">

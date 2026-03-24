@@ -267,7 +267,7 @@ function handleProfileClick() {
         <div class="flex items-start justify-between gap-3 mb-4 flex-wrap">
           <div class="flex items-center gap-3">
             <img
-              :src="memory.user?.avatar ?? '/default-avatar.png'"
+              :src="memory.user?.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(memory.user?.name)}`"
               class="w-11 h-11 rounded-full object-cover ring-2 ring-brand/20"
             />
             <div>
@@ -426,7 +426,7 @@ function handleProfileClick() {
           </div>
           <div class="flex gap-3">
             <img
-              :src="user?.avatar_url ?? '/default-avatar.png'"
+              :src="user?.avatar_url ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user?.name)}`"
               class="w-9 h-9 rounded-full shrink-0 mt-1 ring-2 ring-brand/20"
             />
             <div class="flex-1 flex gap-2">
@@ -475,7 +475,7 @@ function handleProfileClick() {
           <li v-for="c in comments" :key="c.id">
             <div class="flex gap-3">
               <img
-                :src="c.user?.avatar ?? '/default-avatar.png'"
+                :src="c.user?.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(c.user?.name)}`"
                 class="w-9 h-9 rounded-full shrink-0 mt-0.5"
               />
               <div class="flex-1 min-w-0">
@@ -510,7 +510,7 @@ function handleProfileClick() {
                 <ul v-if="c.replies && c.replies.length" class="mt-3 space-y-3 ml-4 pl-4 border-l-2 border-gray-100 dark:border-gray-700">
                   <li v-for="r in c.replies" :key="r.id" class="flex gap-2">
                     <img
-                      :src="r.user?.avatar ?? '/default-avatar.png'"
+                      :src="r.user?.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(r.user?.name)}`"
                       class="w-8 h-8 rounded-full shrink-0 mt-0.5"
                     />
                     <div class="flex-1 min-w-0">

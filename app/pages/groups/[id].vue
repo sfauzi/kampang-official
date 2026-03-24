@@ -309,7 +309,7 @@ function handleProfileClick() {
                   class="flex items-center gap-3 px-5 py-3.5"
                 >
                   <img
-                    :src="member.avatar ?? '/default-avatar.png'"
+                    :src="member.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(user.name)}`"
                     class="w-10 h-10 rounded-full object-cover shrink-0"
                   />
                   <div class="flex-1 min-w-0">

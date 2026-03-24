@@ -65,7 +65,7 @@ const isOwnProfile = computed(() => currentUser.value?.id === id)
       <div class="bg-white dark:bg-[#181818] border border-gray-100 dark:border-neutral-800 rounded-2xl p-6 mb-5 shadow-sm">
         <div class="flex items-start gap-5">
           <NuxtImg
-            :src="profile.avatar_url ?? '/default-avatar.png'"
+            :src="profile.avatar_url ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(profile.name)}`"
             class="w-20 h-20 rounded-full object-cover ring-2 ring-amber-500/20 shrink-0"
             width="80"
             height="80"
