@@ -13,6 +13,7 @@ const {
 const { isAuthenticated } = useAuth();
 const toast = useToast();
 const { listen } = useMemoryChannel()
+const { open: openLoginModal } = useLoginModal()
 
 const category = ref("");
 const sort = ref<"memory_date" | "created_at">("memory_date");
@@ -99,6 +100,14 @@ const privacyBadgeClass = (privacy: string) => {
     return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
   return "";
 };
+
+// Dipanggil saat klik profile — tidak perlu kirim redirect, 
+// useLoginModal.open() otomatis capture route.fullPath saat itu
+function handleProfileClick() {
+  if (!isAuthenticated.value) {
+    openLoginModal() // tanpa argumen → pakai halaman saat ini
+  }
+}
 </script>
 
 <template>
@@ -111,9 +120,11 @@ const privacyBadgeClass = (privacy: string) => {
         </h1>
         <p v-if="!isAuthenticated" class="text-xs text-gray-400 mt-1">
           Menampilkan kenangan publik ·
-          <NuxtLink to="/login" class="text-amber-400 font-semibold hover:underline"
-            >Login</NuxtLink
+          <button class="text-amber-400 cursor-pointer font-semibold hover:underline"
+            @click="handleProfileClick"
           >
+            Login
+          </button>
           untuk melihat lebih banyak
         </p>
       </div>

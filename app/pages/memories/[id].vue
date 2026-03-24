@@ -170,6 +170,15 @@ const handleDeleteComment = async (commentId: string) => {
 
 // Safe accessor untuk location
 const locationName = computed(() => memory.value?.location?.name ?? null)
+
+const { open: openLoginModal } = useLoginModal()
+
+// useLoginModal.open() otomatis capture route.fullPath saat itu
+function handleProfileClick() {
+  if (!isAuthenticated.value) {
+    openLoginModal() // tanpa argumen → pakai halaman saat ini
+  }
+}
 </script>
 
 <template>
@@ -446,13 +455,13 @@ const locationName = computed(() => memory.value?.location?.name ?? null)
         <div v-else class="bg-gray-50 dark:bg-[#101010] rounded-2xl p-5 mb-5 text-center">
           <Icon name="heroicons:chat-bubble-left-ellipsis" class="w-8 h-8 text-gray-300 mx-auto mb-2" />
           <p class="text-sm text-neutral-500 mb-3">Login untuk berkomentar</p>
-          <NuxtLink
-            to="/login"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm transition shadow-sm"
+          <button
+            @click="handleProfileClick"
+            class="inline-flex cursor-pointer items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm transition shadow-sm"
           >
             <Icon name="heroicons:arrow-right-end-on-rectangle" class="w-4 h-4" />
             Login
-          </NuxtLink>
+          </button>
         </div>
 
         <!-- Empty comments -->

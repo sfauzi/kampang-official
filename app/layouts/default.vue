@@ -3,7 +3,7 @@
 
 <template>
     <div>
-        <!-- <BaseNavigation /> -->
+        <BaseNavigation />
 
         <main class="flex-1">
             <slot />
@@ -17,6 +17,6 @@
 
         <BaseToast />
         <BaseConfirm />
-
+        <LoginModal />
     </div>
 </template>

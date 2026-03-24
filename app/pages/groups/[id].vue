@@ -75,6 +75,15 @@ const handleBanMember = async (memberId: string) => {
   toast.success('Anggota berhasil dibanned.')
   await fetchMembers(id)
 }
+
+const { open: openLoginModal } = useLoginModal()
+
+// useLoginModal.open() otomatis capture route.fullPath saat itu
+function handleProfileClick() {
+  if (!isAuthenticated.value) {
+    openLoginModal() // tanpa argumen → pakai halaman saat ini
+  }
+}
 </script>
 
 <template>
@@ -182,14 +191,14 @@ const handleBanMember = async (memberId: string) => {
                 {{ group.privacy === 'closed' ? 'Minta Bergabung' : 'Bergabung' }}
               </button>
             </template>
-            <NuxtLink
+            <button
               v-else
-              to="/login"
-              class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold transition"
+              @click="handleProfileClick"
+              class="inline-flex items-center cursor-pointer gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold transition"
             >
               <Icon name="heroicons:arrow-right-on-rectangle" class="w-4 h-4" />
               Login untuk bergabung
-            </NuxtLink>
+            </button>
           </div>
         </div>
 
