@@ -36,7 +36,7 @@
       class="flex items-center justify-between px-5 py-4 border-b lg:hidden"
       :class="isDark ? 'border-stone-700' : 'border-stone-200'"
     >
-      <NuxtLink to="/dashboard" class="flex items-center">
+      <NuxtLink to="/" class="flex items-center">
         <NuxtImg src="/logo-ko.png" class="max-h-6 w-auto object-contain block" :style="{ maxWidth: '160px' }" />
       </NuxtLink>
       <button
@@ -77,7 +77,7 @@
     <!-- ── Navigation ─────────────────────────────────────────── -->
     <nav
       class="flex-1 overflow-y-auto overflow-x-hidden py-3 space-y-0.5"
-      :class="desktopCollapsed ? 'px-2' : 'px-3'"
+        :class="desktopCollapsed ? 'px-2' : 'px-3'"
     >
       <template v-for="section in navSections" :key="section.title">
 
@@ -110,7 +110,7 @@
           <!-- Active bar -->
           <span
             v-if="isActive(item.to)"
-            class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 rounded-r-full bg-brand"
+            class="absolute -left-3 top-1/2 -translate-y-1/2 w-0.5 h-6 rounded-r-full bg-amber-500"
           />
 
           <!-- Icon -->
@@ -128,7 +128,7 @@
           <span
             v-if="item.badge && !desktopCollapsed"
             class="text-[10px] font-bold px-1.5 py-0.5 rounded-full font-Manrope flex-shrink-0"
-            :class="item.badgeColor ?? 'bg-brand/20 text-amber-600'"
+            :class="item.badgeColor ?? 'bg-amber/20 text-amber-600'"
           >
             {{ item.badge }}
           </span>
@@ -137,7 +137,7 @@
           <span
             v-if="item.badge && desktopCollapsed"
             class="hidden lg:block absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
-            :class="item.badgeDot ?? 'bg-brand'"
+            :class="item.badgeDot ?? 'bg-amber'"
           />
 
           <!--
@@ -166,7 +166,7 @@
             <span
               v-if="item.badge"
               class="text-[10px] px-1.5 py-0.5 rounded-full"
-              :class="item.badgeColor ?? 'bg-brand/30 text-amber-400'"
+              :class="item.badgeColor ?? 'bg-amber/30 text-amber-400'"
             >{{ item.badge }}</span>
           </span>
         </NuxtLink>
@@ -179,15 +179,16 @@
       :class="isDark ? 'border-stone-700/60' : 'border-stone-200/80'"
     >
       <!-- Upgrade card (expanded) -->
-      <div v-if="!desktopCollapsed" class="px-3 pt-3">
+
+      <!-- <div v-if="!desktopCollapsed" class="px-3 pt-3">
         <div
           class="rounded-xl p-3.5 relative overflow-hidden"
           :class="isDark ? 'bg-stone-800/80' : 'bg-amber-50'"
         >
-          <div class="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-brand/10 blur-xl" />
+          <div class="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-amber/10 blur-xl" />
           <div class="flex items-start gap-2.5 relative">
-            <div class="w-8 h-8 rounded-lg bg-brand/20 flex items-center justify-center flex-shrink-0">
-              <svg class="w-4 h-4 text-brand" fill="currentColor" viewBox="0 0 24 24">
+            <div class="w-8 h-8 rounded-lg bg-amber/20 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-amber" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
               </svg>
             </div>
@@ -196,17 +197,12 @@
               <p class="text-[11px] mt-0.5" :class="isDark ? 'text-stone-400' : 'text-stone-500'">Unlock all features</p>
             </div>
           </div>
-          <button class="mt-3 w-full text-xs font-bold font-Manrope py-2 rounded-lg bg-brand hover:bg-brand-dark text-stone-900 transition-colors duration-200 shadow-sm shadow-amber-400/30">
+          <button class="mt-3 cursor-pointer w-full text-xs font-bold text-stone-800 dark:text-stone-100 font-Manrope py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-stone-900 transition-colors duration-200 shadow-sm shadow-amber-400/30">
             Upgrade Now
           </button>
         </div>
       </div>
 
-      <!--
-        Upgrade icon saat collapsed — menggunakan group/tooltip
-        yang sama polanya tapi di luar nav sehingga tidak ada masalah
-        overflow. Tooltip di sini sudah bekerja dengan benar.
-      -->
       <div v-else class="hidden lg:flex justify-center px-2 pt-3">
         <button
           class="group relative w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200"
@@ -215,7 +211,7 @@
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
-          <!-- Tooltip upgrade — bekerja karena tidak ada overflow:hidden di parent -->
+          Tooltip upgrade — bekerja karena tidak ada overflow:hidden di parent
           <span
             class="
               pointer-events-none absolute left-full ml-3 z-[99]
@@ -230,7 +226,7 @@
             Upgrade to Pro
           </span>
         </button>
-      </div>
+      </div> -->
 
       <!-- Profile mini -->
       <NuxtLink
@@ -335,8 +331,14 @@ onMounted(() => { checkMobile(); window.addEventListener('resize', checkMobile) 
 onUnmounted(() => window.removeEventListener('resize', checkMobile))
 
 // ── Helpers ───────────────────────────────────────────────────────
-const isActive = (to: string) =>
-  route.path === to || route.path.startsWith(to + '/')
+const isActive = (to: string) => {
+  // Dashboard harus exact match — karena semua route mulai dengan /dashboard
+  if (to === '/dashboard') {
+    return route.path === '/dashboard'
+  }
+  // Route lain: exact atau prefix match
+  return route.path === to || route.path.startsWith(to + '/')
+}
 
 const getNavClass = (to: string) => {
   const active = isActive(to)
@@ -360,56 +362,39 @@ const navSections = [
         label: 'Dashboard', to: '/dashboard',
         icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 13a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/></svg>`
       },
-      {
-        label: 'Memories', to: '/dashboard/memories',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`,
-        badge: 'New', badgeColor: 'bg-brand/20 text-amber-600', badgeDot: 'bg-brand'
-      },
-      {
-        label: 'Albums', to: '/dashboard/albums',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`
-      },
-      {
-        label: 'Groups', to: '/dashboard/groups',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`
-      },
+      
     ]
   },
   {
     title: 'Manage',
     items: [
       {
-        label: 'Users', to: '/dashboard/users',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`,
-        badge: '12', badgeColor: 'bg-blue-500/15 text-blue-500', badgeDot: 'bg-blue-500'
+        label: 'Memories', to: '/dashboard/memories',
+        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`,
+        badgeColor: 'bg-amber/20 text-amber-600', badgeDot: 'bg-amber'
       },
       {
-        label: 'Projects', to: '/dashboard/projects',
+        label: 'Albums', to: '/dashboard/albums',
         icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>`
       },
       {
-        label: 'Tasks', to: '/dashboard/tasks',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>`,
-        badge: '3', badgeColor: 'bg-red-500/15 text-red-400', badgeDot: 'bg-red-400'
-      },
-      {
-        label: 'Messages', to: '/dashboard/messages',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>`
+        label: 'Groups', to: '/dashboard/groups',
+        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`
       },
     ]
   },
-  {
-    title: 'System',
-    items: [
-      {
-        label: 'Settings', to: '/dashboard/settings',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>`
-      },
-      {
-        label: 'Help & Docs', to: '/dashboard/help',
-        icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
-      },
-    ]
-  },
+  // {
+  //   title: 'System',
+  //   items: [
+  //     {
+  //       label: 'Settings', to: '/dashboard/settings',
+  //       icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>`
+  //     },
+  //     {
+  //       label: 'Help & Docs', to: '/dashboard/help',
+  //       icon: `<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+  //     },
+  //   ]
+  // },
 ]
 </script>

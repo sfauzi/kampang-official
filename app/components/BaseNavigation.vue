@@ -111,21 +111,21 @@ function handleProfileClick() {
       <!-- Profile mobile: NuxtLink jika login, button jika belum -->
       <NuxtLink
         v-if="isAuthenticated"
-        to="/profile"
+        to="/dashboard"
         class="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all duration-200"
-        :class="isActive('/profile') ? 'text-amber-500' : 'text-gray-400 dark:text-neutral-600'"
+        :class="isActive('/dashboard') ? 'text-amber-500' : 'text-gray-400 dark:text-neutral-600'"
       >
         <div
           class="w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-200"
-          :class="isActive('/profile') ? 'bg-amber-500/10' : ''"
+          :class="isActive('/dashboard') ? 'bg-amber-500/10' : ''"
         >
           <img
             v-if="user?.avatar_url"
             :src="user.avatar_url"
             class="w-6 h-6 rounded-full object-cover"
-            :class="isActive('/profile') ? 'ring-2 ring-amber-500' : ''"
+            :class="isActive('/dashboard') ? 'ring-2 ring-amber-500' : ''"
           />
-          <Icon v-else name="heroicons:user-circle" class="w-5 h-5" :class="isActive('/profile') ? 'scale-110' : ''" />
+          <Icon v-else name="heroicons:user-circle" class="w-5 h-5" :class="isActive('/dashboard') ? 'scale-110' : ''" />
         </div>
         <span class="text-[10px] font-semibold leading-none">Profil</span>
       </NuxtLink>
