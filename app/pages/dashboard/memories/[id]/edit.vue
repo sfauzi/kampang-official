@@ -83,7 +83,7 @@ const newPreviews = ref<string[]>([])
 
 const onNewMedia = (e: Event) => {
   const files = Array.from((e.target as HTMLInputElement).files ?? [])
-  newFiles.value    = files.slice(0, 10)
+  newFiles.value    = files.slice(0, 100)
   newPreviews.value = newFiles.value.map(f => URL.createObjectURL(f))
 }
 

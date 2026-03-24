@@ -84,7 +84,7 @@ const albumsWithoutGroup = computed(() =>
 
 const onMediaSelect = (e: Event) => {
   const files    = Array.from((e.target as HTMLInputElement).files ?? [])
-  const combined = [...mediaFiles.value, ...files].slice(0, 10)
+  const combined = [...mediaFiles.value, ...files].slice(0, 100)
   mediaFiles.value    = combined
   mediaPreviews.value = combined.map(f => URL.createObjectURL(f))
 }
@@ -177,7 +177,7 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
           <Icon name="heroicons:photo" class="w-4 h-4 text-amber-500" />
           Foto / Video
-          <span class="text-gray-400 font-normal text-xs ml-1">(maks. 10)</span>
+          <span class="text-gray-400 font-normal text-xs ml-1">(maks. 100)</span>
         </p>
         <div
           v-if="!mediaPreviews.length"
@@ -205,7 +205,7 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
             </button>
           </div>
           <div
-            v-if="mediaPreviews.length < 10"
+            v-if="mediaPreviews.length < 100"
             class="aspect-square rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-brand flex items-center justify-center cursor-pointer transition-colors"
             @click="($refs.mediaInput as HTMLInputElement)?.click()"
           >
