@@ -2,8 +2,9 @@
 export const useLoginModal = () => {
   const isOpen = useState<boolean>('loginModal:isOpen', () => false)
   const redirectTo = useState<string>('loginModal:redirectTo', () => '/')
+  const isPersistent = useState<boolean>('loginModal:isPersistent', () => false)
 
-  const open = (redirect?: string) => {
+  const open = (redirect?: string, options?: { persistent?: boolean }) => {
     // Jika tidak ada redirect yang dioper, pakai halaman saat ini
     if (redirect) {
       redirectTo.value = redirect
@@ -12,12 +13,16 @@ export const useLoginModal = () => {
       const route = useRoute()
       redirectTo.value = route.fullPath
     }
+
+    isPersistent.value = !!options?.persistent
     isOpen.value = true
   }
 
-  const close = () => {
+  const close = (force = false) => {
+    if (isPersistent.value && !force) return
     isOpen.value = false
+    isPersistent.value = false
   }
 
-  return { isOpen, redirectTo, open, close }
+  return { isOpen, redirectTo, isPersistent, open, close }
 }

@@ -1,4 +1,28 @@
 <script lang="ts" setup>
+const route = useRoute()
+const { isAuthenticated } = useAuth()
+const { isOpen, isPersistent, open, close } = useLoginModal()
+
+const guardedPrefixes = ['/albums', '/groups', '/memories', '/users']
+
+const requiresLoginGate = computed(() =>
+    guardedPrefixes.some((prefix) => route.path === prefix || route.path.startsWith(`${prefix}/`))
+)
+
+watch(
+    [requiresLoginGate, isAuthenticated, () => route.fullPath],
+    ([requiresAuth, authenticated, fullPath]) => {
+        if (requiresAuth && !authenticated) {
+            open(fullPath, { persistent: true })
+            return
+        }
+
+        if (isOpen.value && isPersistent.value) {
+            close(true)
+        }
+    },
+    { immediate: true }
+)
 </script>
 
 <template>

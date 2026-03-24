@@ -1,17 +1,17 @@
 <!-- components/LoginModal.vue -->
 <script setup lang="ts">
-const { isOpen, redirectTo, close } = useLoginModal()
+const { isOpen, redirectTo, isPersistent, close } = useLoginModal()
 const { loginWithGoogle } = useAuth()
 
 const handleLogin = () => {
   // Kirim redirectTo saat ini ke loginWithGoogle
   loginWithGoogle(redirectTo.value)
-  close()
+  close(true)
 }
 
 onMounted(() => {
   const onKey = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') close()
+    if (e.key === 'Escape' && !isPersistent.value) close()
   }
   window.addEventListener('keydown', onKey)
   onUnmounted(() => window.removeEventListener('keydown', onKey))
@@ -30,10 +30,10 @@ onMounted(() => {
     >
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
       >
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="close" />
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="!isPersistent && close()" />
 
         <!-- Modal -->
         <Transition
@@ -50,8 +50,9 @@ onMounted(() => {
           >
             <!-- Close -->
             <button
+              v-if="!isPersistent"
               class="absolute cursor-pointer top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-neutral-800 transition"
-              @click="close"
+              @click="() => close()"
             >
               <Icon name="heroicons:x-mark" class="w-4 h-4" />
             </button>
@@ -78,7 +79,7 @@ onMounted(() => {
 
             <p class="text-center text-xs text-gray-400 mt-4 leading-relaxed">
               Dengan masuk, kamu menyetujui
-              <NuxtLink to="/terms" class="text-amber-500 hover:underline" @click="close">Syarat & Ketentuan</NuxtLink>
+              <NuxtLink to="/terms" class="text-amber-500 hover:underline" @click="() => close()">Syarat & Ketentuan</NuxtLink>
               kami.
             </p>
           </div>
