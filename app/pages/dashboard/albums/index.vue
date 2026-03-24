@@ -9,95 +9,132 @@
   - Creator album mendapat badge "Milikku"
 -->
 <script setup lang="ts">
-definePageMeta({ layout: 'dashboard', middleware: 'auth' })
+definePageMeta({ layout: "dashboard", middleware: "auth" });
 
 const {
-  myAlbums, myPagination, loading, error,
-  fetchMyAlbums, deleteAlbum, respondInvitation,
-} = useAlbums()
-const { user }    = useAuth()
-const toast       = useToast()
-const { confirm } = useConfirm()
+  myAlbums,
+  myPagination,
+  loading,
+  error,
+  fetchMyAlbums,
+  deleteAlbum,
+  respondInvitation,
+} = useAlbums();
+const { user } = useAuth();
+const toast = useToast();
+const { confirm } = useConfirm();
 
-const category = ref('')
-const collab   = ref('')
-const page     = ref(1)
+const category = ref("");
+const collab = ref("");
+const page = ref(1);
 
 const load = () =>
   fetchMyAlbums({
-    category:         category.value || undefined,
-    is_collaborative: collab.value === 'true'  ? true
-                    : collab.value === 'false' ? false
-                    : undefined,
-    page:     page.value,
+    category: category.value || undefined,
+    is_collaborative:
+      collab.value === "true" ? true : collab.value === "false" ? false : undefined,
+    page: page.value,
     per_page: 12,
-  })
+  });
 
-watch([category, collab], () => { page.value = 1; load() })
-watch(page, load)
-onMounted(load)
+watch([category, collab], () => {
+  page.value = 1;
+  load();
+});
+watch(page, load);
+onMounted(load);
 
 // Pisahkan: undangan pending vs album biasa
 const pendingInvitations = computed(() =>
-  myAlbums.value.filter(a =>
-    a.contributor_status === 'pending' && a.creator?.id !== user.value?.id
+  myAlbums.value.filter(
+    (a) => a.contributor_status === "pending" && a.creator?.id !== user.value?.id
   )
-)
+);
 
 const regularAlbums = computed(() =>
-  myAlbums.value.filter(a =>
-    !(a.contributor_status === 'pending' && a.creator?.id !== user.value?.id)
+  myAlbums.value.filter(
+    (a) => !(a.contributor_status === "pending" && a.creator?.id !== user.value?.id)
   )
-)
+);
 
 const handleDelete = async (id: string, title: string) => {
   const ok = await confirm({
-    title:       `Hapus album "${title}"?`,
-    message:     'Album dan semua kenangan di dalamnya akan dihapus permanen.',
-    confirmText: 'Hapus',
-    cancelText:  'Batal',
-    type:        'danger',
-  })
-  if (!ok) return
-  const success = await deleteAlbum(id)
-  if (success) toast.success('Album berhasil dihapus.')
-  else toast.error(error.value ?? 'Gagal menghapus.')
-}
+    title: `Hapus album "${title}"?`,
+    message: "Album dan semua kenangan di dalamnya akan dihapus permanen.",
+    confirmText: "Hapus",
+    cancelText: "Batal",
+    type: "danger",
+  });
+  if (!ok) return;
+  const success = await deleteAlbum(id);
+  if (success) toast.success("Album berhasil dihapus.");
+  else toast.error(error.value ?? "Gagal menghapus.");
+};
 
-const handleRespond = async (albumId: string, status: 'accepted' | 'declined', title: string) => {
-  const ok = await respondInvitation(albumId, status)
+const handleRespond = async (
+  albumId: string,
+  status: "accepted" | "declined",
+  title: string
+) => {
+  const ok = await respondInvitation(albumId, status);
   if (ok) {
-    toast.success(status === 'accepted'
-      ? `Kamu sekarang menjadi kontributor "${title}"!`
-      : `Undangan "${title}" ditolak.`
-    )
-    load()
+    toast.success(
+      status === "accepted"
+        ? `Kamu sekarang menjadi kontributor "${title}"!`
+        : `Undangan "${title}" ditolak.`
+    );
+    load();
   } else {
-    toast.error(error.value ?? 'Gagal merespons undangan.')
+    toast.error(error.value ?? "Gagal merespons undangan.");
   }
-}
+};
 
 // Tentukan label & style badge berdasar relasi user ke album
 const getAlbumBadge = (a: any) => {
-  if (a.creator?.id === user.value?.id) return { label: 'Milikku', cls: 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50' }
-  if (a.contributor_status === 'accepted') return { label: 'Kontributor', cls: 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50' }
-  if (a.contributor_status === 'pending')  return { label: 'Menunggu', cls: 'bg-yellow-50 text-yellow-600 dark:bg-yellow-950/60 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50' }
-  return null
-}
+  if (a.creator?.id === user.value?.id)
+    return {
+      label: "Milikku",
+      cls:
+        "bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50",
+    };
+  if (a.contributor_status === "accepted")
+    return {
+      label: "Kontributor",
+      cls:
+        "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50",
+    };
+  if (a.contributor_status === "pending")
+    return {
+      label: "Menunggu",
+      cls:
+        "bg-yellow-50 text-yellow-600 dark:bg-yellow-950/60 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50",
+    };
+  return null;
+};
 
-const privacyLabel: Record<string, string> = { public: 'Publik', group: 'Grup', private: 'Privat' }
+const privacyLabel: Record<string, string> = {
+  public: "Publik",
+  group: "Grup",
+  private: "Privat",
+};
 const privacyClass: Record<string, string> = {
-  public: 'bg-green-50 dark:bg-green-950/60 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800/50',
-  group: 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50',
-  private: 'bg-yellow-50 dark:bg-yellow-950/60 text-yellow-600 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50'
-}
+  public:
+    "bg-green-50 dark:bg-green-950/60 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800/50",
+  group:
+    "bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50",
+  private:
+    "bg-yellow-50 dark:bg-yellow-950/60 text-yellow-600 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800/50",
+};
+
+const { formatDate } = useFormatDate();
 </script>
 
 <template>
   <div class="max-w-5xl mx-auto px-4 py-8 font-[Manrope]">
-
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6 animate-[fadeIn_0.4s_ease_forwards]">
+    <div
+      class="flex items-center justify-between mb-6 animate-[fadeIn_0.4s_ease_forwards]"
+    >
       <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Albumku</h1>
         <p class="text-sm text-gray-400 mt-1 flex items-center gap-1">
@@ -116,8 +153,13 @@ const privacyClass: Record<string, string> = {
     </div>
 
     <!-- ── Undangan pending ── -->
-    <div v-if="pendingInvitations.length" class="mb-6 animate-[slideUp_0.3s_ease_forwards]">
-      <h2 class="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-3 flex items-center gap-1.5">
+    <div
+      v-if="pendingInvitations.length"
+      class="mb-6 animate-[slideUp_0.3s_ease_forwards]"
+    >
+      <h2
+        class="text-sm font-semibold text-amber-600 dark:text-amber-400 mb-3 flex items-center gap-1.5"
+      >
         <Icon name="heroicons:bell" class="w-4 h-4" />
         Undangan Album ({{ pendingInvitations.length }})
       </h2>
@@ -127,14 +169,25 @@ const privacyClass: Record<string, string> = {
           :key="a.id"
           class="bg-white dark:bg-[#181818] border border-gray-100 dark:border-neutral-800 border-l-4 border-l-amber-400 rounded-2xl p-4 flex items-center gap-4 flex-wrap"
         >
-          <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 dark:bg-[#101010] shrink-0">
-            <img v-if="a.cover_media?.url" :src="a.cover_media.url" class="w-full h-full object-cover" />
+          <div
+            class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 dark:bg-[#101010] shrink-0"
+          >
+            <img
+              v-if="a.cover_media?.url"
+              :src="a.cover_media.url"
+              class="w-full h-full object-cover"
+            />
             <div v-else class="w-full h-full flex items-center justify-center">
-              <Icon name="heroicons:book-open" class="w-6 h-6 text-gray-300 dark:text-neutral-700" />
+              <Icon
+                name="heroicons:book-open"
+                class="w-6 h-6 text-gray-300 dark:text-neutral-700"
+              />
             </div>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="font-semibold text-gray-900 dark:text-white text-sm truncate">{{ a.title }}</p>
+            <p class="font-semibold text-gray-900 dark:text-white text-sm truncate">
+              {{ a.title }}
+            </p>
             <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
               <Icon name="heroicons:user-circle" class="w-3 h-3" />
               Oleh {{ a.creator?.name }}
@@ -215,10 +268,17 @@ const privacyClass: Record<string, string> = {
       v-else-if="!regularAlbums.length && !pendingInvitations.length"
       class="flex flex-col items-center justify-center py-24 gap-3"
     >
-      <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#181818] border border-gray-200 dark:border-neutral-800 flex items-center justify-center">
-        <Icon name="heroicons:book-open" class="w-8 h-8 text-gray-300 dark:text-neutral-700" />
+      <div
+        class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#181818] border border-gray-200 dark:border-neutral-800 flex items-center justify-center"
+      >
+        <Icon
+          name="heroicons:book-open"
+          class="w-8 h-8 text-gray-300 dark:text-neutral-700"
+        />
       </div>
-      <p class="text-base font-semibold text-gray-500 dark:text-gray-400">Belum ada album</p>
+      <p class="text-base font-semibold text-gray-500 dark:text-gray-400">
+        Belum ada album
+      </p>
       <NuxtLink
         to="/dashboard/albums/create"
         class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition mt-1"
@@ -229,7 +289,10 @@ const privacyClass: Record<string, string> = {
     </div>
 
     <!-- Grid album -->
-    <div v-else-if="regularAlbums.length" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div
+      v-else-if="regularAlbums.length"
+      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+    >
       <article
         v-for="a in regularAlbums"
         :key="a.id"
@@ -237,14 +300,19 @@ const privacyClass: Record<string, string> = {
       >
         <!-- Thumbnail -->
         <NuxtLink :to="`/albums/${a.id}`">
-          <div class="aspect-square bg-gray-100 dark:bg-[#101010] overflow-hidden relative">
+          <div
+            class="aspect-square bg-gray-100 dark:bg-[#101010] overflow-hidden relative"
+          >
             <img
               v-if="a.cover_media?.url"
               :src="a.cover_media.url"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
             <div v-else class="w-full h-full flex items-center justify-center">
-              <Icon name="heroicons:book-open" class="w-12 h-12 text-gray-300 dark:text-neutral-700" />
+              <Icon
+                name="heroicons:book-open"
+                class="w-12 h-12 text-gray-300 dark:text-neutral-700"
+              />
             </div>
 
             <!-- Badges kiri atas -->
@@ -271,7 +339,13 @@ const privacyClass: Record<string, string> = {
               :class="privacyClass[a.privacy]"
             >
               <Icon
-                :name="a.privacy === 'public' ? 'heroicons:globe-alt' : a.privacy === 'group' ? 'heroicons:user-group' : 'heroicons:lock-closed'"
+                :name="
+                  a.privacy === 'public'
+                    ? 'heroicons:globe-alt'
+                    : a.privacy === 'group'
+                    ? 'heroicons:user-group'
+                    : 'heroicons:lock-closed'
+                "
                 class="w-2.5 h-2.5"
               />
               {{ privacyLabel[a.privacy] }}
@@ -288,7 +362,10 @@ const privacyClass: Record<string, string> = {
             {{ a.title }}
           </NuxtLink>
 
-          <p v-if="a.creator?.id !== user?.id" class="text-xs text-gray-400 mb-0.5 flex items-center gap-1">
+          <p
+            v-if="a.creator?.id !== user?.id"
+            class="text-xs text-gray-400 mb-0.5 flex items-center gap-1"
+          >
             <Icon name="heroicons:user-circle" class="w-3 h-3" />
             oleh {{ a.creator?.name }}
           </p>
@@ -298,7 +375,7 @@ const privacyClass: Record<string, string> = {
             {{ a.memories_count ?? 0 }} kenangan
             <template v-if="a.event_date">
               <span class="text-gray-300 dark:text-neutral-700">·</span>
-              {{ a.event_date }}
+              {{ formatDate(a.event_date) }}
             </template>
           </p>
 
@@ -346,9 +423,11 @@ const privacyClass: Record<string, string> = {
         v-for="p in myPagination.last_page"
         :key="p"
         class="w-9 h-9 rounded-xl text-sm font-semibold transition-all duration-200"
-        :class="p === myPagination.current_page
-          ? 'bg-amber-500 text-white shadow-sm'
-          : 'bg-white dark:bg-[#181818] text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-neutral-800 hover:border-amber-500 hover:text-amber-500'"
+        :class="
+          p === myPagination.current_page
+            ? 'bg-amber-500 text-white shadow-sm'
+            : 'bg-white dark:bg-[#181818] text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-neutral-800 hover:border-amber-500 hover:text-amber-500'
+        "
         @click="page = p"
       >
         {{ p }}

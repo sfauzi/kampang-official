@@ -14,6 +14,7 @@ const { isAuthenticated } = useAuth();
 const toast = useToast();
 const { listen } = useMemoryChannel()
 const { open: openLoginModal } = useLoginModal()
+const { formatDateLong } = useFormatDate()
 
 const category = ref("");
 const sort = ref<"memory_date" | "created_at">("memory_date");
@@ -224,7 +225,7 @@ function handleProfileClick() {
             </NuxtLink>
             <p class="text-xs text-gray-400 truncate flex items-center gap-1 mt-0.5">
               <Icon name="heroicons:calendar-days" class="w-3 h-3 shrink-0" />
-              {{ m.memory_date }}
+              {{ formatDateLong(m.memory_date) }}
               <template v-if="m.location?.name">
                 <span>·</span>
                 <Icon name="heroicons:map-pin" class="w-3 h-3 shrink-0" />

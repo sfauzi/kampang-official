@@ -179,6 +179,7 @@ function handleProfileClick() {
     openLoginModal() // tanpa argumen → pakai halaman saat ini
   }
 }
+const { formatDateLong } = useFormatDate()
 </script>
 
 <template>
@@ -279,7 +280,7 @@ function handleProfileClick() {
               </NuxtLink>
               <p class="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
                 <Icon name="heroicons:calendar-days" class="w-3 h-3" />
-                {{ memory.memory_date }}
+                {{ formatDateLong(memory.memory_date) }}
                 <span class="mx-0.5">·</span>
                 <span class="capitalize">{{ memory.category }}</span>
                 <span

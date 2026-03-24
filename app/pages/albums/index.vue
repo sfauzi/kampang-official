@@ -67,6 +67,9 @@ function handleProfileClick() {
     openLoginModal() // tanpa argumen → pakai halaman saat ini
   }
 }
+
+const { formatDate } = useFormatDate()
+
 </script>
 
 <template>
@@ -216,7 +219,7 @@ function handleProfileClick() {
               <template v-if="album.event_date">
                 <span class="text-gray-300 dark:text-neutral-700">·</span>
                 <Icon name="heroicons:calendar-days" class="w-3 h-3" />
-                {{ album.event_date }}
+                {{ formatDate(album.event_date) }}
               </template>
             </p>
             <div class="flex flex-wrap gap-1">
