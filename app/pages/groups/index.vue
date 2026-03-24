@@ -132,7 +132,7 @@ const categoryEmoji: Record<string, string> = {
         class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold transition-all duration-200"
       >
         <Icon name="heroicons:plus" class="w-4 h-4" />
-        Buat Grup
+          <span class="hidden sm:inline">Buat Group</span>
       </NuxtLink>
     </div>
 

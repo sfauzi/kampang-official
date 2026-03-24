@@ -135,7 +135,7 @@ function handleProfileClick() {
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm"
       >
         <Icon name="heroicons:plus-16-solid" class="w-4 h-4" />
-        Tambah Kenangan
+        <span class="hidden sm:inline">Tambah Kenangan</span>
       </NuxtLink>
     </div>
 

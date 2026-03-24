@@ -431,7 +431,7 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
         >
           <Icon v-if="loading" name="heroicons:arrow-path" class="w-4 h-4 animate-spin" />
           <Icon v-else name="heroicons:check" class="w-4 h-4" />
-          {{ loading ? 'Menyimpan...' : 'Simpan Kenangan' }}
+          {{ loading ? 'Menyimpan...' : 'Simpan' }}
         </button>
       </div>
     </form>
