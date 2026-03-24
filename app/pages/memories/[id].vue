@@ -445,7 +445,7 @@ const { formatDateLong } = useFormatDate()
               >
                 <Icon v-if="submittingComment" name="heroicons:arrow-path" class="w-4 h-4 animate-spin" />
                 <Icon v-else name="heroicons:paper-airplane" class="w-4 h-4" />
-                Kirim
+                  <span class="hidden sm:inline">Kirim</span>
               </button>
             </div>
           </div>
