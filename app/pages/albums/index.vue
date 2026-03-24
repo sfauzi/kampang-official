@@ -59,6 +59,14 @@ const handleRespond = async (
     toast.error(error.value ?? "Gagal merespons undangan.");
   }
 };
+
+const { open: openLoginModal } = useLoginModal()
+
+function handleProfileClick() {
+  if (!isAuthenticated.value) {
+    openLoginModal() // tanpa argumen → pakai halaman saat ini
+  }
+}
 </script>
 
 <template>
@@ -71,7 +79,7 @@ const handleRespond = async (
         <p v-if="!isAuthenticated" class="text-xs text-gray-400 mt-1 flex items-center gap-1">
           <Icon name="heroicons:eye" class="w-3.5 h-3.5" />
           Menampilkan album publik ·
-          <NuxtLink to="/login" class="text-amber-500 hover:underline font-semibold">Login</NuxtLink>
+          <button @click="handleProfileClick" class="cursor-pointer text-amber-500 hover:underline font-semibold">Login</button>
           untuk melihat lebih banyak
         </p>
       </div>
