@@ -37,7 +37,7 @@
       :class="isDark ? 'border-stone-700' : 'border-stone-200'"
     >
       <NuxtLink to="/" class="flex items-center">
-        <NuxtImg src="/logo-ko.png" class="max-h-6 w-auto object-contain block" :style="{ maxWidth: '160px' }" />
+        <img src="/logo-ko.png" class="max-h-6 w-auto object-contain block" :style="{ maxWidth: '160px' }" />
       </NuxtLink>
       <button
         @click="mobileOpen = false"
