@@ -86,16 +86,13 @@ onUnmounted(() => {
       class="hidden lg:flex fixed left-0 top-0 h-full w-16 flex-col items-center py-5 gap-1 bg-white dark:bg-[#111111] border-r border-gray-100 dark:border-neutral-900 z-50">
 
       <NuxtLink to="/"
-        class="mb-6 w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center shrink-0 hover:bg-amber-600 transition">
-        <Icon name="heroicons:camera" class="w-5 h-5 text-white" />
+        class="mb-6 w-9 h-9 p-1 rounded-xl bg-amber-500 flex items-center justify-center shrink-0 hover:bg-amber-600 transition overflow-hidden">
+        <NuxtImg src="/logo-inisial.png" alt="Kampang" class="w-full h-full object-contain" />
       </NuxtLink>
 
       <!-- nav center tengah + search di tengah navitems -->
       <nav class="flex flex-col items-center gap-1 flex-1 justify-center">
-        <NuxtLink
-          v-for="item in navItemsTop"
-          :key="item.to"
-          :to="item.to"
+        <NuxtLink v-for="item in navItemsTop" :key="item.to" :to="item.to"
           class="relative w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 group"
           :class="isActive(item.to)
             ? 'bg-amber-500 text-white shadow-sm'
@@ -118,10 +115,7 @@ onUnmounted(() => {
           </span>
         </button>
 
-        <NuxtLink
-          v-for="item in navItemsBottom"
-          :key="item.to"
-          :to="item.to"
+        <NuxtLink v-for="item in navItemsBottom" :key="item.to" :to="item.to"
           class="relative w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-200 group"
           :class="isActive(item.to)
             ? 'bg-amber-500 text-white shadow-sm'
@@ -161,6 +155,7 @@ onUnmounted(() => {
         </span>
       </div>
     </aside>
+
 
     <!-- ── MOBILE bottom nav ── -->
     <nav

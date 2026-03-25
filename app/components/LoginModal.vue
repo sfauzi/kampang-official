@@ -59,9 +59,11 @@ onMounted(() => {
 
             <!-- Brand -->
             <div class="flex flex-col items-center text-center mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-amber-500 flex items-center justify-center mb-4 shadow-sm">
-                <Icon name="heroicons:camera" class="w-7 h-7 text-white" />
-              </div>
+                <NuxtImg
+                src="/logo-ko.png"
+                alt="Kenangan Logo"
+                class="w-18 h-18 object-contain"
+                />
               <h2 class="text-xl font-bold text-gray-900 dark:text-white">Masuk ke Kenangan</h2>
               <p class="text-sm text-gray-400 mt-1.5 leading-relaxed">
                 Simpan dan bagikan momen berharga<br />bersama orang-orang terdekatmu.
