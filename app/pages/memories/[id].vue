@@ -2,7 +2,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
-import type { ReactionType } from '~/types/kenangan'
+import type { ReactionType, Comment, PaginatedResponse, Memory } from '~/types/kenangan'
 
 const route = useRoute()
 const id    = route.params.id as string
@@ -20,11 +20,147 @@ const toast = useToast()
 const { confirm } = useConfirm()
 const router = useRouter()
 const { listen } = useMemoryChannel()
+const { api, base } = useApi()
+
+let sse: EventSource | null = null
+let sseRetryTimer: ReturnType<typeof setTimeout> | null = null
+const sseRetryCount = ref(0)
+const MAX_SSE_RETRY = 6
+
+const stopCommentStream = () => {
+  if (sse) {
+    sse.close()
+    sse = null
+  }
+  if (sseRetryTimer) {
+    clearTimeout(sseRetryTimer)
+    sseRetryTimer = null
+  }
+}
+
+const scheduleSseReconnect = () => {
+  if (sseRetryCount.value >= MAX_SSE_RETRY) {
+    startCommentsPolling() // fallback final
+    return
+  }
+  const delay = Math.min(15000, 1000 * 2 ** sseRetryCount.value) // exponential backoff
+  sseRetryCount.value += 1
+  sseRetryTimer = setTimeout(() => {
+    startCommentStream()
+  }, delay)
+}
+
+const startCommentStream = () => {
+  if (!import.meta.client || sse) return
+
+  try {
+    // endpoint SSE backend (contoh)
+    sse = new EventSource(`${base}/api/memories/${id}/comments/stream`)
+
+    sse.onopen = async () => {
+      sseRetryCount.value = 0
+      stopCommentsPolling() // pakai stream dulu
+      await syncCommentsSilently() // sync awal
+    }
+
+    sse.onmessage = async () => {
+      // event payload tidak wajib dipakai; tetap source of truth dari endpoint comments
+      await syncCommentsSilently()
+    }
+
+    sse.onerror = () => {
+      stopCommentStream()
+      startCommentsPolling() // fallback langsung
+      scheduleSseReconnect()
+    }
+  } catch {
+    stopCommentStream()
+    startCommentsPolling()
+    scheduleSseReconnect()
+  }
+}
+
+// ── Sync komentar lintas browser/device (polling) ───────────────────────────
+const POLL_COMMENTS_MS = 8000
+let pollCommentsTimer: ReturnType<typeof setInterval> | null = null
+const isSyncingComments = ref(false)
+const lastCommentsSignature = ref('')
+
+const commentsSignature = (list: Comment[]) =>
+  list
+    .map((c: any) => `${c.id}:${c.updated_at ?? c.created_at}:${(c.replies?.length ?? 0)}`)
+    .join('|')
+
+const syncCommentsSilently = async () => {
+  if (isSyncingComments.value) return
+  isSyncingComments.value = true
+
+  try {
+    const res = await api<PaginatedResponse<Comment>>(`/api/memories/${id}/comments`, {
+      query: { page: 1 },
+    })
+
+    const nextComments = res?.data ?? []
+    const nextSig = commentsSignature(nextComments)
+
+    if (nextSig !== lastCommentsSignature.value) {
+      comments.value = nextComments
+      lastCommentsSignature.value = nextSig
+    }
+
+    // sinkronkan counter dari sumber kebenaran backend
+    const fresh = await api<Memory>(`/api/memories/${id}`)
+    if (memory.value?.id === id) {
+      memory.value.comments_count = fresh?.comments_count ?? memory.value.comments_count ?? 0
+    }
+  } catch (e) {
+    // Silent: jangan timpa error page utama saat polling background
+    if (import.meta.dev) console.warn('[memories/[id]] syncCommentsSilently:', e)
+  } finally {
+    isSyncingComments.value = false
+  }
+}
+
+const startCommentsPolling = () => {
+  if (pollCommentsTimer) return
+  pollCommentsTimer = setInterval(syncCommentsSilently, POLL_COMMENTS_MS)
+}
+
+const stopCommentsPolling = () => {
+  if (!pollCommentsTimer) return
+  clearInterval(pollCommentsTimer)
+  pollCommentsTimer = null
+}
+
+const onVisibilityChange = async () => {
+  if (document.visibilityState === 'visible') {
+    await syncCommentsSilently()
+    startCommentStream()
+    startCommentsPolling()
+  } else {
+    stopCommentStream()
+    stopCommentsPolling()
+  }
+}
+
+const onWindowFocus = async () => {
+  await syncCommentsSilently()
+}
 
 
 onMounted(async () => {
   await fetchMemory(id)
   if (memory.value) await fetchComments(id)
+
+  lastCommentsSignature.value = commentsSignature(comments.value as Comment[])
+
+  // prioritas stream, fallback polling otomatis
+  startCommentStream()
+  startCommentsPolling()
+
+  document.addEventListener('visibilitychange', onVisibilityChange)
+  window.addEventListener('focus', onWindowFocus)
+
 
   const unlisten = listen(async (event) => {
     if (event.type === 'updated' && event.memory.id === id) {
@@ -71,10 +207,19 @@ onMounted(async () => {
           memory.value.comments_count = Math.max(0, (memory.value.comments_count ?? 0) - (event.removedTotal ?? 1))
         }
       }
+            lastCommentsSignature.value = commentsSignature(comments.value as Comment[])
+
     }
   })
 
   onUnmounted(unlisten)
+})
+
+onUnmounted(() => {
+  stopCommentStream()
+  stopCommentsPolling()
+  document.removeEventListener('visibilitychange', onVisibilityChange)
+  window.removeEventListener('focus', onWindowFocus)
 })
 
 const isOwner     = computed(() => memory.value?.user?.id === user.value?.id)
