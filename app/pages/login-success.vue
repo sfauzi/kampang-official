@@ -1,7 +1,6 @@
+<!-- pages/login-success.vue -->
 <script lang="ts" setup>
-definePageMeta({
-  layout: 'default',
-})
+definePageMeta({ layout: 'default' })
 
 const router = useRouter()
 const route = useRoute()
@@ -11,10 +10,7 @@ const status = ref<'loading' | 'success' | 'error'>('loading')
 const errorMessage = ref('')
 
 onMounted(async () => {
-  // Decode token dari query — backend pakai urlencode
   const rawToken = route.query.auth_token
-
-  // Tangani kasus token berupa array (edge case query duplikat)
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
 
   if (!token) {
@@ -23,49 +19,49 @@ onMounted(async () => {
     return
   }
 
-  // handleLoginSuccess: simpan token ke localStorage + coba fetch user
-  // fetchUser boleh gagal — token tetap tersimpan, profile page akan retry
   await handleLoginSuccess(token)
-
-  // ✅ Langsung redirect ke /profile TANPA cek ok/false
-  // Middleware di /profile hanya cek keberadaan token di localStorage
-  // Jika token ada → masuk. Jika fetchUser gagal → profile retry via onMounted
   status.value = 'success'
+
+  // Ambil intended redirect dari sessionStorage
+  const intendedRedirect = sessionStorage.getItem('auth_redirect') || '/dashboard'
+  sessionStorage.removeItem('auth_redirect')
+
   await new Promise((r) => setTimeout(r, 800))
-  await router.replace('/profile')
+  await router.replace(intendedRedirect)
 })
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-stone-950 transition-colors duration-300">
-    <div class="bg-white dark:bg-stone-900 rounded-2xl shadow-lg p-10 flex flex-col items-center gap-4 max-w-sm w-full transition-colors duration-300">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0d0d0d] font-[Manrope]">
+    <div class="bg-white dark:bg-[#181818] border border-gray-100 dark:border-neutral-800 rounded-2xl shadow-sm p-10 flex flex-col items-center gap-4 max-w-sm w-full">
 
       <!-- Loading -->
       <template v-if="status === 'loading'">
-        <div class="w-12 h-12 rounded-full border-4 border-amber-200 dark:border-amber-300 border-t-amber-600 dark:border-t-amber-400 animate-spin transition-colors duration-300" />
-        <p class="text-stone-600 dark:text-stone-400 font-medium">Memproses login...</p>
+        <div class="w-12 h-12 rounded-full border-4 border-amber-200 dark:border-amber-900 border-t-amber-500 animate-spin" />
+        <p class="text-gray-500 dark:text-gray-400 font-semibold text-sm">Memproses login...</p>
       </template>
 
       <!-- Success -->
       <template v-else-if="status === 'success'">
-        <div class="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center transition-colors duration-300">
-          <Icon name="heroicons:check-circle-20-solid" class="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+        <div class="w-14 h-14 rounded-2xl bg-green-50 dark:bg-green-950/40 flex items-center justify-center">
+          <Icon name="heroicons:check-circle" class="w-8 h-8 text-green-500 dark:text-green-400" />
         </div>
-        <p class="text-stone-800 dark:text-stone-50 font-semibold text-lg">Login berhasil!</p>
-        <p class="text-stone-500 dark:text-stone-400 text-sm">Mengalihkan ke halaman profil...</p>
+        <p class="text-gray-900 dark:text-white font-bold text-lg">Login berhasil!</p>
+        <p class="text-gray-400 text-sm">Mengalihkan ke halaman sebelumnya...</p>
       </template>
 
       <!-- Error -->
       <template v-else>
-        <div class="w-14 h-14 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center transition-colors duration-300">
-          <Icon name="heroicons:x-circle-20-solid" class="w-8 h-8 text-red-500 dark:text-red-400" />
+        <div class="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center">
+          <Icon name="heroicons:x-circle" class="w-8 h-8 text-red-500 dark:text-red-400" />
         </div>
-        <p class="text-stone-800 dark:text-stone-50 font-semibold text-lg">Login gagal</p>
-        <p class="text-stone-500 dark:text-stone-400 text-sm text-center">{{ errorMessage }}</p>
+        <p class="text-gray-900 dark:text-white font-bold text-lg">Login gagal</p>
+        <p class="text-gray-400 text-sm text-center">{{ errorMessage }}</p>
         <NuxtLink
           to="/"
-          class="mt-2 px-5 py-2 bg-amber-600 dark:bg-amber-700 text-white rounded-lg text-sm font-medium hover:bg-amber-700 dark:hover:bg-amber-600 transition"
+          class="mt-2 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold transition"
         >
+          <Icon name="heroicons:arrow-left" class="w-4 h-4" />
           Kembali ke Beranda
         </NuxtLink>
       </template>

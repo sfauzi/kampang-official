@@ -6,7 +6,7 @@ import ProfileSongModal from '~/components/Profile/ProfileSongModal.vue'
 import type { ProfileSong, SpotifyTrack } from '~/types/user'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'dashboard',
   middleware: 'auth',
 })
 
@@ -323,7 +323,7 @@ const randomText = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-stone-50 dark:bg-stone-950 py-12 px-4 transition-colors duration-300">
+  <div class="min-h-screen bg-stone-50 dark:bg-stone-950 py-3 px-0.5 transition-colors duration-300">
     <div class="max-w-2xl mx-auto">
 
       <!-- Loading state -->
@@ -504,7 +504,7 @@ const randomText = computed(() => {
                 <Icon name="heroicons:music-note" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Lagu Favorit
               </h2>
-              <div @click="toast.info('Fitur ini masih dalam tahap pengembangan 🚧')"
+              <div @click="toast.info('Fitur ini tidak tersedia karena keterbatasan Spotify Premium 🎵')"
                 class="cursor-not-allowed inline-flex" title="Masih dalam pengembangan">
                 <button disabled class="pointer-events-none flex items-center gap-2 px-4 py-2 text-sm font-medium
            text-stone-400 dark:text-stone-600 border border-stone-200 dark:border-stone-700

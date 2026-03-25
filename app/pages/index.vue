@@ -292,13 +292,13 @@ useSeoMeta({
         <span class="text-amber-600 dark:text-amber-400 font-mansalva">Kampang Official</span>
       </h1>
 
-      <p v-if="!isAuthenticated" class="text-stone-600 dark:text-stone-400 text-lg max-w-md drop-shadow-sm transition-colors duration-300">
+      <!-- <p v-if="!isAuthenticated" class="text-stone-600 dark:text-stone-400 text-lg max-w-md drop-shadow-sm transition-colors duration-300">
         Masuk dengan akun Google untuk mendapatkan notifikasi peluncuran.
       </p>
 
       <p v-else class="text-stone-600 dark:text-stone-400 text-lg max-w-md drop-shadow-sm transition-colors duration-300">
         Terima kasih telah masuk <span class="font-semibold text-amber-600 dark:text-amber-400 font-mansalva">{{ user?.name }}</span>! Nantikan peluncuran resmi kami.
-      </p>
+      </p> -->
 
       <!-- Countdown Timer -->
       <div class="pointer-events-none w-full max-w-lg">
@@ -374,7 +374,7 @@ useSeoMeta({
         </div>
       </div>
 
-      <template v-if="!isAuthenticated">
+      <!-- <template v-if="!isAuthenticated">
         <button
           class="pointer-events-auto cursor-pointer flex items-center gap-3 px-6 py-3 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-base font-medium shadow-sm hover:shadow-md hover:border-stone-300 dark:hover:border-stone-600 transition-all duration-200"
           @click="loginWithGoogle">
@@ -388,7 +388,7 @@ useSeoMeta({
           class="pointer-events-auto px-6 py-3 bg-amber-600 dark:bg-amber-700 text-white rounded-xl text-base font-medium hover:bg-amber-700 dark:hover:bg-amber-600 transition">
           Lihat Profil Saya →
         </NuxtLink>
-      </template>
+      </template> -->
     </div>
 
     <!-- Song Modal -->
