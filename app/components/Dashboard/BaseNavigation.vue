@@ -36,7 +36,7 @@
         </button>
 
         <NuxtLink to="/" class="hidden sm:flex items-center">
-          <NuxtImg
+          <img
             src="/logo-ko.png"
             class="max-h-8 w-auto object-contain block"
             :style="{ maxWidth: '160px' }"

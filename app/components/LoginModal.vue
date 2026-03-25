@@ -59,7 +59,7 @@ onMounted(() => {
 
             <!-- Brand -->
             <div class="flex flex-col items-center text-center mb-6">
-                <NuxtImg
+                <img
                 src="/logo-ko.png"
                 alt="Kenangan Logo"
                 class="w-18 h-18 object-contain"

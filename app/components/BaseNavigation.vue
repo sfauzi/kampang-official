@@ -87,7 +87,7 @@ onUnmounted(() => {
 
       <NuxtLink to="/"
         class="mb-6 w-9 h-9 p-1 rounded-xl bg-amber-500 flex items-center justify-center shrink-0 hover:bg-amber-600 transition overflow-hidden">
-        <NuxtImg src="/logo-inisial.png" alt="Kampang" class="w-full h-full object-contain" />
+        <img src="/logo-inisial.png" alt="Kampang" class="w-full h-full object-contain" />
       </NuxtLink>
 
       <!-- nav center tengah + search di tengah navitems -->
