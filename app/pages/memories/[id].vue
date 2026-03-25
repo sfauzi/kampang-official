@@ -179,7 +179,7 @@ function handleProfileClick() {
     openLoginModal() // tanpa argumen → pakai halaman saat ini
   }
 }
-const { formatDateLong } = useFormatDate()
+const { formatDateLong, formatCommentTime } = useFormatDate()
 
 const isVideoMedia = (m: any): boolean => {
   const type = String(m?.type ?? m?.media_type ?? '').toLowerCase()
@@ -523,7 +523,7 @@ const getMediaThumb = (m: any): string | null => {
                 <div class="flex gap-4 mt-1.5 text-xs text-neutral-500 pl-1">
                   <span class="flex items-center gap-1">
                     <Icon name="heroicons:clock" class="w-3 h-3" />
-                    {{ c.created_at }}
+                    {{ formatCommentTime(c.created_at) }}
                   </span>
                   <button
                     v-if="isAuthenticated"
@@ -558,7 +558,7 @@ const getMediaThumb = (m: any): string | null => {
                       <div class="flex gap-4 mt-1 text-xs text-neutral-500 pl-1">
                         <span class="flex items-center gap-1">
                           <Icon name="heroicons:clock" class="w-3 h-3" />
-                          {{ r.created_at }}
+                          {{ formatCommentTime(r.created_at) }}
                         </span>
                         <button
                           v-if="r.is_mine || isOwner"

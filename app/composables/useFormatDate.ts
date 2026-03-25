@@ -45,10 +45,31 @@ export const useFormatDate = () => {
     })
   }
 
+  const formatCommentTime = (input?: string | null): string => {
+    if (!input) return '-'
+
+    // Ambil apa adanya dari backend: YYYY-MM-DD HH:mm:ss / YYYY-MM-DDTHH:mm:ss
+    const m = String(input).match(
+      /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/
+    )
+
+    if (m) {
+      const [, yyyy, mm, dd, hh, mi, ss = '00'] = m
+      const monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+      const month = monthShort[Math.max(0, Math.min(11, Number(mm) - 1))] ?? mm
+      // fixed: "25 Mar 2026, 03:08:26" (tanpa geser timezone)
+      return `${dd} ${month} ${yyyy}, ${hh}:${mi}:${ss}`
+    }
+
+    // fallback jika format lain
+    return String(input)
+  }
+
   return {
     formatDate,
     formatDateShort,
     formatDateLong,
     formatDateFull,
+    formatCommentTime,
   }
 }
