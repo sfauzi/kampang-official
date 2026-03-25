@@ -58,6 +58,50 @@ const privacyClass: Record<string, string> = {
   private: 'bg-amber-500/80 text-white',
 }
 
+const isVideoMedia = (x: any): boolean => {
+  const type = String(x?.type ?? x?.media_type ?? '').toLowerCase()
+  const mime = String(x?.mime_type ?? '').toLowerCase()
+  return type === 'video' || type.includes('video') || mime.startsWith('video/')
+}
+
+const isImageMedia = (x: any): boolean => {
+  const type = String(x?.type ?? x?.media_type ?? '').toLowerCase()
+  const mime = String(x?.mime_type ?? '').toLowerCase()
+  return type === 'photo' || type.includes('image') || mime.startsWith('image/')
+}
+
+const getThumbSrc = (x: any): string | null => {
+  const thumb = x?.thumbnail_url ?? x?.thumb_url ?? x?.poster_url ?? null
+  if (thumb) return thumb
+  if (isImageMedia(x)) {
+    return x?.url ?? x?.media_url ?? x?.file_url ?? x?.original_url ?? null
+  }
+  return null
+}
+
+const getCoverMedia = (m: any): any | null => {
+  const mediaList = Array.isArray(m?.media) ? m.media : []
+  if (!mediaList.length) return null
+
+  const imageFirst = mediaList.find((x: any) => isImageMedia(x) && getThumbSrc(x))
+  if (imageFirst) return imageFirst
+
+  const videoWithThumb = mediaList.find((x: any) => isVideoMedia(x) && getThumbSrc(x))
+  if (videoWithThumb) return videoWithThumb
+
+  return mediaList.find((x: any) => getThumbSrc(x)) ?? null
+}
+
+const getThumbnail = (m: any): string | null => {
+  const cover = getCoverMedia(m)
+  return cover ? getThumbSrc(cover) : null
+}
+
+const isVideoCover = (m: any): boolean => {
+  const cover = getCoverMedia(m)
+  return !!cover && isVideoMedia(cover)
+}
+
 onMounted(async () => {
   await fetchMyMemories({ /* params yang sudah ada */ })
 })
@@ -92,27 +136,6 @@ onMounted(() => {
 
   onUnmounted(unlisten) // cleanup saat halaman di-destroy
 })
-
-const getThumbnail = (m: any): string | null => {
-  const mediaList = Array.isArray(m?.media) ? m.media : []
-  if (!mediaList.length) return null
-
-  // Prioritaskan media gambar kalau ada
-  const imageMedia =
-    mediaList.find((x: any) =>
-      String(x?.type ?? x?.media_type ?? x?.mime_type ?? '').includes('image')
-    ) ?? mediaList[0]
-
-  return (
-    imageMedia?.thumbnail_url ??
-    imageMedia?.thumb_url ??
-    imageMedia?.url ??
-    imageMedia?.media_url ??
-    imageMedia?.file_url ??
-    imageMedia?.original_url ??
-    null
-  )
-}
 
 </script>
 

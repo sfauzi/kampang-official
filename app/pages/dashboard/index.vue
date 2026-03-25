@@ -7,6 +7,24 @@ const { myGroups,   fetchMyGroups }                    = useGroups()
 const { myAlbums,   fetchMyAlbums }                    = useAlbums()
 const toast = useToast()
 
+const isVideoMedia = (media: any): boolean => {
+  const type = String(media?.type ?? media?.media_type ?? '').toLowerCase()
+  const mime = String(media?.mime_type ?? '').toLowerCase()
+  return type === 'video' || type.includes('video') || mime.startsWith('video/')
+}
+
+const getMediaCardPreview = (media: any): string | null => {
+  if (!media || isVideoMedia(media)) return null
+  return media?.thumbnail_url
+    ?? media?.thumb_url
+    ?? media?.poster_url
+    ?? media?.url
+    ?? media?.media_url
+    ?? media?.file_url
+    ?? media?.original_url
+    ?? null
+}
+
 onMounted(async () => {
   await Promise.all([
     // Fetch data milik user sendiri — bukan data publik
@@ -130,12 +148,15 @@ const stats = computed(() => [
           class="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#101010] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 group"
         >
           <img
-            v-if="m.media?.[0]?.thumbnail_url || m.media?.[0]?.url"
-            :src="m.media[0].thumbnail_url ?? m.media[0].url"
+            v-if="getMediaCardPreview(m.media?.[0])"
+            :src="getMediaCardPreview(m.media?.[0])!"
             class="w-full h-full object-cover group-hover:brightness-90 transition"
           />
           <div v-else class="w-full h-full flex items-center justify-center">
-            <Icon name="heroicons:photo" class="w-10 h-10 text-gray-300 dark:text-neutral-700" />
+            <Icon
+              :name="isVideoMedia(m.media?.[0]) ? 'heroicons:film' : 'heroicons:photo'"
+              class="w-10 h-10 text-gray-300 dark:text-neutral-700"
+            />
           </div>
           <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-3">
             <p class="text-white text-xs font-semibold line-clamp-1">{{ m.title ?? m.memory_date }}</p>
@@ -192,12 +213,15 @@ const stats = computed(() => [
           class="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#101010] hover:scale-[1.02] hover:shadow-lg transition-all duration-200 group"
         >
           <img
-            v-if="m.media?.[0]?.thumbnail_url || m.media?.[0]?.url"
-            :src="m.media[0].thumbnail_url ?? m.media[0].url"
+            v-if="getMediaCardPreview(m.media?.[0])"
+            :src="getMediaCardPreview(m.media?.[0])!"
             class="w-full h-full object-cover group-hover:brightness-90 transition"
           />
           <div v-else class="w-full h-full flex items-center justify-center">
-            <Icon name="heroicons:photo" class="w-10 h-10 text-gray-300 dark:text-neutral-700" />
+            <Icon
+              :name="isVideoMedia(m.media?.[0]) ? 'heroicons:film' : 'heroicons:photo'"
+              class="w-10 h-10 text-gray-300 dark:text-neutral-700"
+            />
           </div>
           <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-2">
             <p class="text-white text-xs font-semibold line-clamp-1">{{ m.title ?? m.memory_date }}</p>

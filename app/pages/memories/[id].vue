@@ -180,6 +180,23 @@ function handleProfileClick() {
   }
 }
 const { formatDateLong } = useFormatDate()
+
+const isVideoMedia = (m: any): boolean => {
+  const type = String(m?.type ?? m?.media_type ?? '').toLowerCase()
+  const mime = String(m?.mime_type ?? '').toLowerCase()
+  return type === 'video' || type.includes('video') || mime.startsWith('video/')
+}
+
+const getMediaThumb = (m: any): string | null => {
+  // FIX: kalau video, pakai icon saja (jangan render img thumbnail)
+  if (isVideoMedia(m)) return null
+
+  const thumb = m?.thumbnail_url ?? m?.thumb_url ?? m?.poster_url ?? null
+  if (thumb) return thumb
+
+  return m?.url ?? m?.media_url ?? m?.file_url ?? m?.original_url ?? null
+}
+
 </script>
 
 <template>
@@ -250,13 +267,32 @@ const { formatDateLong } = useFormatDate()
           <button
             v-for="(m, i) in memory.media"
             :key="m.id"
-            class="shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200"
+            class="relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200"
             :class="i === activeMedia
               ? 'border-brand shadow-md scale-105'
               : 'border-transparent opacity-50 hover:opacity-80'"
             @click="activeMedia = i"
           >
-            <img :src="m.thumbnail_url ?? m.url" class="w-full h-full object-cover" />
+            <img
+              v-if="getMediaThumb(m)"
+              :src="getMediaThumb(m)!"
+              class="w-full h-full object-cover"
+            />
+            <div
+              v-else
+              class="w-full h-full bg-gray-200 dark:bg-[#101010] flex items-center justify-center"
+            >
+              <Icon :name="isVideoMedia(m) ? 'heroicons:film' : 'heroicons:photo'" class="w-4 h-4 text-gray-400" />
+            </div>
+
+            <div
+              v-if="isVideoMedia(m)"
+              class="absolute inset-0 flex items-center justify-center pointer-events-none"
+            >
+              <div class="bg-black/50 rounded-full p-1">
+                <Icon name="heroicons:play" class="w-3 h-3 text-white" />
+              </div>
+            </div>
           </button>
         </div>
       </div>

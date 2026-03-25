@@ -115,6 +115,28 @@ function handleMobileCategorySelect(value: string) {
   category.value = value
   showMobileFilters.value = false
 }
+
+
+const isVideoMedia = (media: any): boolean => {
+  const type = String(media?.type ?? media?.media_type ?? '').toLowerCase()
+  const mime = String(media?.mime_type ?? '').toLowerCase()
+  return type === 'video' || type.includes('video') || mime.startsWith('video/')
+}
+
+const getMediaPreview = (media: any): string | null => {
+  // FIX: kalau video, pakai icon saja (jangan render thumbnail/image)
+  if (isVideoMedia(media)) return null
+
+  return media?.thumbnail_url
+    ?? media?.thumb_url
+    ?? media?.poster_url
+    ?? media?.url
+    ?? media?.media_url
+    ?? media?.file_url
+    ?? media?.original_url
+    ?? null
+}
+
 </script>
 
 <template>
@@ -319,9 +341,18 @@ function handleMobileCategorySelect(value: string) {
               :class="m.media.length === 1 ? 'h-80' : 'h-48'"
             >
               <img
-                :src="media.thumbnail_url ?? media.url"
+                v-if="getMediaPreview(media)"
+                :src="getMediaPreview(media)!"
                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
+              <div
+                v-else
+                class="w-full h-full flex flex-col items-center justify-center text-gray-400"
+              >
+                <Icon :name="isVideoMedia(media) ? 'heroicons:film' : 'heroicons:photo'" class="w-8 h-8 mb-1" />
+                <span v-if="isVideoMedia(media)" class="text-xs">Video</span>
+              </div>
+
               <div
                 v-if="i === 2 && m.media.length > 3"
                 class="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-3xl font-bold"
