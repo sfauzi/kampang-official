@@ -504,7 +504,7 @@ const randomText = computed(() => {
                 <Icon name="heroicons:music-note" class="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Lagu Favorit
               </h2>
-              <div @click="toast.info('Fitur ini masih dalam tahap pengembangan 🚧')"
+              <div @click="toast.info('Fitur ini tidak tersedia karena keterbatasan Spotify Premium 🎵')"
                 class="cursor-not-allowed inline-flex" title="Masih dalam pengembangan">
                 <button disabled class="pointer-events-none flex items-center gap-2 px-4 py-2 text-sm font-medium
            text-stone-400 dark:text-stone-600 border border-stone-200 dark:border-stone-700
