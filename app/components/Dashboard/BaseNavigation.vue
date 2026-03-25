@@ -46,7 +46,17 @@
 
       <!-- Center: Search bar -->
       <div class="hidden md:flex flex-1 max-w-md mx-6">
-        <div class="relative w-full">
+        <button
+          type="button"
+          @click="openSearchModal"
+          class="relative w-full text-left pl-9 pr-16 py-2 text-sm rounded-lg border transition-colors duration-200 font-Manrope outline-none focus:ring-2 focus:ring-brand/50"
+          :class="[
+            isDark
+              ? 'bg-stone-800 border-stone-700 text-stone-200 hover:border-brand/40 placeholder-stone-500 focus:border-brand/60'
+              : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-brand/40 placeholder-stone-400 focus:border-brand/60',
+          ]"
+          aria-label="Open search modal"
+        >
           <svg
             class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
             :class="isDark ? 'text-stone-500' : 'text-stone-400'"
@@ -58,23 +68,25 @@
             <circle cx="11" cy="11" r="8" />
             <path stroke-linecap="round" d="m21 21-4.35-4.35" />
           </svg>
-          <input
-            type="text"
-            placeholder="Search anything..."
-            class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border transition-colors duration-200 font-Manrope outline-none focus:ring-2 focus:ring-brand/50"
-            :class="[
-              isDark
-                ? 'bg-stone-800 border-stone-700 text-stone-200 placeholder-stone-500 focus:border-brand/60'
-                : 'bg-stone-50 border-stone-200 text-stone-700 placeholder-stone-400 focus:border-brand/60',
-            ]"
-          />
-        </div>
+
+          <span :class="isDark ? 'text-stone-500' : 'text-stone-400'">
+            Search anything...
+          </span>
+
+          <span
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-1.5 py-0.5 rounded border"
+            :class="isDark ? 'border-stone-600 text-stone-400' : 'border-stone-300 text-stone-500'"
+          >
+            Ctrl+K
+          </span>
+        </button>
       </div>
 
       <!-- Right: Actions -->
       <div class="flex items-center gap-1 sm:gap-2">
         <!-- Mobile search -->
         <button
+        @click="openSearchModal"
           class="md:hidden p-2 rounded-lg transition-colors duration-200"
           :class="
             isDark
@@ -261,6 +273,9 @@
       </div>
     </div>
   </header>
+    <!-- Search Modal -->
+  <SearchModal v-model="showSearchModal" />
+
 </template>
 
 <script lang="ts" setup>
@@ -270,6 +285,20 @@ defineEmits<{ "toggle-sidebar": [] }>();
 
 const { isDark } = useTheme();
 const { user, fetchUser, logout } = useAuth();
+
+const showSearchModal = ref(false);
+
+const openSearchModal = () => {
+  showSearchModal.value = true;
+};
+
+const onGlobalKeydown = (e: KeyboardEvent) => {
+  // Ctrl/Cmd + K
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    showSearchModal.value = true;
+  }
+};
 
 // Fetch user saat komponen mount
 onMounted(() => fetchUser());
@@ -337,6 +366,13 @@ const handleClickOutside = (e: MouseEvent) => {
     profileOpen.value = false;
   }
 };
-onMounted(() => document.addEventListener("click", handleClickOutside));
-onUnmounted(() => document.removeEventListener("click", handleClickOutside));
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+  window.addEventListener("keydown", onGlobalKeydown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+  window.removeEventListener("keydown", onGlobalKeydown);
+});
 </script>
