@@ -26,7 +26,7 @@ const socials = [
         </ul>
 
         <!-- Copyright -->
-        <p class="text-stone-700 dark:text-stone-300">
+        <p class="text-stone-700 dark:text-stone-300 text-sm">
           Copyright &copy; 2026 Kampang Official - Powered by 
           <a href="https://sfauzi.dev" class="hover:underline transition-colors duration-200 font-mansalva">
             sfauzi.dev
