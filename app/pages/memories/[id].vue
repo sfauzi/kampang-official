@@ -497,13 +497,13 @@ const getMediaThumb = (m: any): string | null => {
               <Icon name="heroicons:map-pin" class="w-3.5 h-3.5" />
               {{ memory.is_pinned ? 'Unpin' : 'Pin' }}
             </button>
-            <button
+            <!-- <button
               class="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-neutral-800 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-50 dark:hover:bg-[#101010] transition"
               @click="handleAddToMap"
             >
               <Icon name="heroicons:map" class="w-3.5 h-3.5" />
               Peta
-            </button>
+            </button> -->
             <NuxtLink
               :to="`/dashboard/memories/${id}/edit`"
               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-neutral-800 text-gray-600 dark:text-gray-300 text-xs font-medium hover:bg-gray-50 dark:hover:bg-[#101010] transition"
