@@ -8,8 +8,8 @@ const mobileProfileRef = ref<HTMLElement | null>(null)
 const navItems = [
   { to: '/', label: 'Home', icon: 'heroicons:home', iconActive: 'heroicons:home-solid' },
   { to: '/memories', label: 'Kenangan', icon: 'heroicons:photo', iconActive: 'heroicons:photo' },
-  { to: '/groups', label: 'Grup', icon: 'heroicons:user-group', iconActive: 'heroicons:user-group' },
   { to: '/albums', label: 'Album', icon: 'heroicons:book-open', iconActive: 'heroicons:book-open' },
+  { to: '/groups', label: 'Grup', icon: 'heroicons:user-group', iconActive: 'heroicons:user-group' },
 ]
 
 const mobileDashboardMenus = [
