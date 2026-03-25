@@ -1,18 +1,24 @@
 // middleware/auth.ts
+// Lokasi : middleware/auth.ts
+// Fungsi : Route guard untuk halaman yang butuh login (layout dashboard).
+//          Dipasang via definePageMeta({ middleware: 'auth' }).
+//          Mengecek token dari useState (SSR-safe) ATAU tokenStorage (client).
+
+import { tokenStorage } from '~/utils/auth'
 
 export default defineNuxtRouteMiddleware(() => {
-  // Hanya jalan di client — localStorage tidak ada di server
-  if (import.meta.server) return
+  const { isAuthenticated, token } = useAuth()
 
-  // ✅ Cek token langsung dari localStorage — paling reliable
-  // Tidak bergantung pada reactive state yang mungkin belum ter-init
-  const token = localStorage.getItem('auth_token')
+  // useState sudah terisi (navigasi dalam app)
+  if (isAuthenticated.value) return
 
-  if (!token) {
-    return navigateTo('/')
+  // Fallback: cek localStorage (hard refresh / direct URL)
+  if (import.meta.client && tokenStorage.get()) {
+    token.value = tokenStorage.get()
+    isAuthenticated.value = true
+    return
   }
 
-  // Sync ke reactive state supaya composable langsung bisa pakai
-  const { init } = useAuth()
-  init()
+  // Tidak ada token → redirect ke halaman utama
+  return navigateTo('/', { redirectCode: 302 })
 })

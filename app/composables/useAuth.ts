@@ -21,9 +21,16 @@ export const useAuth = () => {
     }
   }
 
-  const loginWithGoogle = () => {
-    window.location.href = `${config.public.apiBase}/auth/google/redirect`
+  const loginWithGoogle = (redirectAfter?: string) => {
+  if (import.meta.client) {
+    // Simpan intended redirect ke sessionStorage sebelum pergi ke Google
+    const target = redirectAfter ?? useRouter().currentRoute.value.fullPath
+    if (target && target !== '/login-success') {
+      sessionStorage.setItem('auth_redirect', target)
+    }
   }
+  window.location.href = `${config.public.apiBase}/auth/google/redirect`
+}
 
   const fetchUser = async (force = false): Promise<boolean> => {
     const currentToken = token.value ?? tokenStorage.get()
