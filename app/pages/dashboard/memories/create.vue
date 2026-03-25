@@ -39,8 +39,35 @@ const form = reactive<Omit<StoreMemoryPayload, 'media'>>({
   tagged_user_ids: [],
 })
 
+// ── Media state: simpan file + preview URL + tipe ──────────────────────────
 const mediaFiles    = ref<File[]>([])
 const mediaPreviews = ref<string[]>([])
+const mediaTypes    = ref<('photo' | 'video')[]>([])  // FIX: track tipe tiap file
+
+// FIX: Konstanta ukuran file (exact match dengan backend: 10MB = 10240 KB)
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB dalam bytes
+
+// FIX: Validasi file individual sebelum preview
+const isValidMediaFile = (file: File): { valid: boolean; error?: string } => {
+  // Check size
+  if (file.size > MAX_FILE_SIZE) {
+    return {
+      valid: false,
+      error: `${file.name} terlalu besar (${(file.size / 1024 / 1024).toFixed(2)}MB). Maksimal 10MB.`,
+    }
+  }
+
+  // Check MIME type
+  const validMimes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime']
+  if (!validMimes.includes(file.type)) {
+    return {
+      valid: false,
+      error: `${file.name} format tidak didukung. Gunakan JPG, PNG, GIF, MP4, WebM, atau MOV.`,
+    }
+  }
+
+  return { valid: true }
+}
 
 onMounted(async () => {
   await Promise.all([
@@ -82,15 +109,101 @@ const albumsWithoutGroup = computed(() =>
   myAlbums.value.filter(a => !a.group)
 )
 
-const onMediaSelect = (e: Event) => {
-  const files    = Array.from((e.target as HTMLInputElement).files ?? [])
-  const combined = [...mediaFiles.value, ...files].slice(0, 100)
-  mediaFiles.value    = combined
-  mediaPreviews.value = combined.map(f => URL.createObjectURL(f))
+// ── FIX: Generate video thumbnail menggunakan canvas ────────────────────────
+const generateVideoThumbnail = (file: File): Promise<string> => {
+  return new Promise((resolve) => {
+    const url    = URL.createObjectURL(file)
+    const video  = document.createElement('video')
+    video.src    = url
+    video.muted  = true
+    video.preload = 'metadata'
+
+    video.onloadeddata = () => {
+      video.currentTime = 0
+    }
+
+    video.onseeked = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width  = 160
+      canvas.height = 160
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        // crop center-square dari video
+        const vw = video.videoWidth
+        const vh = video.videoHeight
+        const size = Math.min(vw, vh)
+        const sx = (vw - size) / 2
+        const sy = (vh - size) / 2
+        ctx.drawImage(video, sx, sy, size, size, 0, 0, 160, 160)
+      }
+      URL.revokeObjectURL(url)
+      resolve(canvas.toDataURL('image/jpeg', 0.8))
+    }
+
+    video.onerror = () => {
+      // Fallback: gunakan placeholder jika gagal generate thumbnail
+      URL.revokeObjectURL(url)
+      resolve('')
+    }
+  })
 }
+
+// ── FIX: onMediaSelect — handle video thumbnail + validasi size ─────────────
+const onMediaSelect = async (e: Event) => {
+  const files = Array.from((e.target as HTMLInputElement).files ?? [])
+
+  // Reset input
+  ;(e.target as HTMLInputElement).value = ''
+
+  if (!files.length) return
+
+  const errors: string[] = []
+  const validFiles: File[] = []
+
+  // Validasi setiap file individual
+  for (const file of files) {
+    const validation = isValidMediaFile(file)
+    if (!validation.valid) {
+      errors.push(validation.error!)
+    } else {
+      validFiles.push(file)
+    }
+  }
+
+  // Tampilkan semua error sekaligus
+  if (errors.length) {
+    toast.error(errors.join('\n'))
+  }
+
+  if (!validFiles.length) return
+
+  const combined = [...mediaFiles.value, ...validFiles].slice(0, 100)
+
+  // Generate preview
+  const newPreviews: string[] = []
+  const newTypes: ('photo' | 'video')[] = []
+
+  for (const f of combined) {
+    const isVideo = f.type.startsWith('video/')
+    newTypes.push(isVideo ? 'video' : 'photo')
+
+    if (isVideo) {
+      const thumb = await generateVideoThumbnail(f)
+      newPreviews.push(thumb || URL.createObjectURL(f))
+    } else {
+      newPreviews.push(URL.createObjectURL(f))
+    }
+  }
+
+  mediaFiles.value = combined
+  mediaPreviews.value = newPreviews
+  mediaTypes.value = newTypes
+}
+
 const removeMedia = (i: number) => {
   mediaFiles.value.splice(i, 1)
   mediaPreviews.value.splice(i, 1)
+  mediaTypes.value.splice(i, 1)
 }
 
 const toggleTag = (tagId: string) => {
@@ -98,19 +211,22 @@ const toggleTag = (tagId: string) => {
   idx === -1 ? form.tag_ids!.push(tagId) : form.tag_ids!.splice(idx, 1)
 }
 
+// ── FIX: handleSubmit — jangan redirect jika ada error ──────────────────────
 const handleSubmit = async () => {
   if (!form.memory_date) {
     toast.error('Tanggal kenangan wajib diisi.')
     return
   }
+
   const memory = await createMemory({ ...form, media: mediaFiles.value })
+
+  // FIX: hanya redirect jika memory berhasil dibuat (tidak null)
   if (memory) {
     toast.success('Kenangan berhasil ditambahkan!')
     if (fromAlbumId) router.push(`/albums/${fromAlbumId}`)
     else router.push(`/memories/${memory.id}`)
-  } else {
-    toast.error(error.value ?? 'Gagal menyimpan kenangan.')
   }
+  // Jika null, error sudah di-set oleh composable → tampil di template, TIDAK redirect
 }
 
 const categoryOptions: { label: string; value: Category }[] = [
@@ -177,7 +293,7 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
           <Icon name="heroicons:photo" class="w-4 h-4 text-amber-500" />
           Foto / Video
-          <span class="text-gray-400 font-normal text-xs ml-1">(maks. 100)</span>
+          <span class="text-gray-400 font-normal text-xs ml-1">(maks. 100 file, maks. 2MB/file)</span>
         </p>
         <div
           v-if="!mediaPreviews.length"
@@ -189,13 +305,30 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
           </div>
           <span class="text-gray-400 text-sm">Klik atau seret foto/video ke sini</span>
         </div>
+
+        <!-- FIX: Grid preview dengan indikator tipe video -->
         <div v-else class="grid grid-cols-4 gap-2">
           <div
             v-for="(preview, i) in mediaPreviews"
             :key="i"
             class="relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group"
           >
-            <img :src="preview" class="w-full h-full object-cover" />
+            <!-- FIX: Selalu render <img> karena preview sudah berupa URL/dataURL -->
+            <img
+              :src="preview || '/placeholder-video.png'"
+              class="w-full h-full object-cover"
+              :class="{ 'opacity-80': mediaTypes[i] === 'video' }"
+            />
+            <!-- FIX: Badge overlay untuk video -->
+            <div
+              v-if="mediaTypes[i] === 'video'"
+              class="absolute inset-0 flex items-center justify-center pointer-events-none"
+            >
+              <div class="bg-black/50 rounded-full p-2">
+                <Icon name="heroicons:play" class="w-5 h-5 text-white" />
+              </div>
+            </div>
+            <!-- Tombol hapus -->
             <button
               type="button"
               class="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 transition"
@@ -204,6 +337,7 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
               <Icon name="heroicons:x-mark" class="w-3 h-3" />
             </button>
           </div>
+          <!-- Tombol tambah media -->
           <div
             v-if="mediaPreviews.length < 100"
             class="aspect-square rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-brand flex items-center justify-center cursor-pointer transition-colors"
@@ -406,7 +540,7 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
         </div>
       </div>
 
-      <!-- Error -->
+      <!-- Error — FIX: selalu tampil di sini, tidak redirect -->
       <div
         v-if="error"
         class="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 text-sm"

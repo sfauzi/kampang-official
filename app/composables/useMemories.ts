@@ -110,6 +110,54 @@ export const useMemories = () => {
     }
   }
 
+  // ─── FIX: Helper untuk parse pesan error upload ────────────────────────────
+  const parseUploadError = (e: any): string => {
+    // 413: payload too large (nginx/server level)
+    if (e?.status === 413) return 'File terlalu besar. Harap kurangi ukuran atau jumlah file.'
+
+    // 422: validation error dari Laravel
+    if (e?.status === 422) {
+      const errors = e?.data?.errors
+      if (errors) {
+        // Cek error media array
+        if (errors['media']) {
+          return errors['media'][0] ?? 'Validasi media gagal.'
+        }
+        if (errors['media.0']) {
+          return errors['media.0'][0] ?? 'File pertama tidak valid.'
+        }
+        // Cari pattern media.* errors
+        const mediaErrors = Object.entries(errors).find(([key]) => key.startsWith('media.'))
+        if (mediaErrors) {
+          return Array.isArray(mediaErrors[1])
+            ? (mediaErrors[1][0] as string)
+            : String(mediaErrors[1])
+        }
+
+        // Fallback: ambil error pertama
+        const firstKey = Object.keys(errors)[0]
+        if (firstKey) {
+          return Array.isArray(errors[firstKey])
+            ? (errors[firstKey][0] ?? 'Validasi gagal.')
+            : String(errors[firstKey])
+        }
+      }
+      return e?.data?.message ?? 'Data tidak valid.'
+    }
+
+    // 408 / network timeout
+    if (e?.status === 408 || e?.name === 'TimeoutError') {
+      return 'Upload timeout. Coba file yang lebih kecil atau koneksi yang lebih stabil.'
+    }
+
+    // Generic fetch abort
+    if (e?.name === 'AbortError') {
+      return 'Upload dibatalkan atau koneksi terputus.'
+    }
+
+    return e?.data?.message ?? e?.message ?? 'Gagal mengunggah file.'
+  }
+
   // ─── Create ───────────────────────────────────────────────────────────────
   const createMemory = async (payload: StoreMemoryPayload): Promise<Memory | null> => {
     loading.value = true
@@ -139,7 +187,8 @@ export const useMemories = () => {
       broadcast({ type: 'created', memory: res.memory })
       return res.memory
     } catch (e: any) {
-      error.value = e?.data?.message ?? 'Gagal membuat kenangan.'
+      // FIX: gunakan parseUploadError untuk pesan yang lebih spesifik
+      error.value = parseUploadError(e)
       return null
     } finally {
       loading.value = false
@@ -223,12 +272,17 @@ export const useMemories = () => {
     try {
       const formData = new FormData()
       files.forEach(f => formData.append('media[]', f))
-      await api(`/api/memories/${memoryId}/media`, { method: 'POST', body: formData })
+
+      await api(`/api/memories/${memoryId}/media`, {
+        method: 'POST',
+        body: formData,
+      })
+
       await fetchMemory(memoryId)
       broadcast({ type: 'media_added', memoryId })
       return true
     } catch (e: any) {
-      error.value = e?.data?.message ?? 'Gagal menambah media.'
+      error.value = parseUploadError(e)
       return false
     }
   }

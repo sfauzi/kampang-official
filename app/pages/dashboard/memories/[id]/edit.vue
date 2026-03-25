@@ -78,18 +78,124 @@ const onGroupChange = () => {
 
 const currentAlbum = computed(() => memory.value?.album ?? null)
 
+// ── FIX: Track new files + previews + types ─────────────────────────────────
 const newFiles    = ref<File[]>([])
 const newPreviews = ref<string[]>([])
+const newTypes    = ref<('photo' | 'video')[]>([])
 
-const onNewMedia = (e: Event) => {
+// ── FIX: Generate video thumbnail ────────────────────────────────────────────
+const generateVideoThumbnail = (file: File): Promise<string> => {
+  return new Promise((resolve) => {
+    const url    = URL.createObjectURL(file)
+    const video  = document.createElement('video')
+    video.src    = url
+    video.muted  = true
+    video.preload = 'metadata'
+
+    video.onloadeddata = () => {
+      video.currentTime = 0
+    }
+
+    video.onseeked = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width  = 160
+      canvas.height = 160
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        const vw = video.videoWidth
+        const vh = video.videoHeight
+        const size = Math.min(vw, vh)
+        const sx = (vw - size) / 2
+        const sy = (vh - size) / 2
+        ctx.drawImage(video, sx, sy, size, size, 0, 0, 160, 160)
+      }
+      URL.revokeObjectURL(url)
+      resolve(canvas.toDataURL('image/jpeg', 0.8))
+    }
+
+    video.onerror = () => {
+      URL.revokeObjectURL(url)
+      resolve('')
+    }
+  })
+}
+
+// ── FIX: Konstanta ukuran file (match backend)
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB dalam bytes
+
+// FIX: Validasi file individual
+const isValidMediaFile = (file: File): { valid: boolean; error?: string } => {
+  if (file.size > MAX_FILE_SIZE) {
+    return {
+      valid: false,
+      error: `${file.name} terlalu besar (${(file.size / 1024 / 1024).toFixed(2)}MB). Maksimal 10MB.`,
+    }
+  }
+
+  const validMimes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime']
+  if (!validMimes.includes(file.type)) {
+    return {
+      valid: false,
+      error: `${file.name} format tidak didukung. Gunakan JPG, PNG, GIF, MP4, WebM, atau MOV.`,
+    }
+  }
+
+  return { valid: true }
+}
+
+// FIX: onNewMedia dengan validasi individual
+const onNewMedia = async (e: Event) => {
   const files = Array.from((e.target as HTMLInputElement).files ?? [])
-  newFiles.value    = files.slice(0, 100)
-  newPreviews.value = newFiles.value.map(f => URL.createObjectURL(f))
+
+  // Reset input
+  ;(e.target as HTMLInputElement).value = ''
+
+  if (!files.length) return
+
+  const errors: string[] = []
+  const validFiles: File[] = []
+
+  // Validasi setiap file
+  for (const file of files) {
+    const validation = isValidMediaFile(file)
+    if (!validation.valid) {
+      errors.push(validation.error!)
+    } else {
+      validFiles.push(file)
+    }
+  }
+
+  // Tampilkan semua error
+  if (errors.length) {
+    toast.error(errors.join('\n'))
+  }
+
+  if (!validFiles.length) return
+
+  const previews: string[] = []
+  const types: ('photo' | 'video')[] = []
+
+  for (const f of validFiles) {
+    const isVideo = f.type.startsWith('video/')
+    types.push(isVideo ? 'video' : 'photo')
+
+    if (isVideo) {
+      const thumb = await generateVideoThumbnail(f)
+      previews.push(thumb || URL.createObjectURL(f))
+    } else {
+      previews.push(URL.createObjectURL(f))
+    }
+  }
+
+  newFiles.value = validFiles
+  newPreviews.value = previews
+  newTypes.value = types
 }
 
 const removeNewMedia = (i: number) => {
   newFiles.value.splice(i, 1)
   newPreviews.value.splice(i, 1)
+  newTypes.value.splice(i, 1)
 }
 
 const handleDeleteMedia = async (mediaId: string) => {
@@ -110,6 +216,7 @@ const toggleTag = (tagId: string) => {
   idx === -1 ? form.tag_ids.push(tagId) : form.tag_ids.splice(idx, 1)
 }
 
+// ── FIX: handleSubmit — jangan redirect jika update gagal ───────────────────
 const handleSubmit = async () => {
   const updated = await updateMemory(id, {
     ...form,
@@ -117,17 +224,25 @@ const handleSubmit = async () => {
     longitude: null,
   })
 
-  if (updated && newFiles.value.length) {
-    await addMedia(id, newFiles.value)
+  // FIX: Hanya lanjut addMedia & redirect jika update berhasil (tidak null)
+  if (!updated) {
+    // error.value sudah di-set composable, tampil di template
+    return
   }
 
-  if (updated) {
-    toast.success('Kenangan berhasil diperbarui.')
-    if (form.album_id) router.push(`/albums/${form.album_id}`)
-    else router.push(`/memories/${id}`)
-  } else {
-    toast.error(error.value ?? 'Gagal memperbarui.')
+  // Tambah media baru jika ada
+  if (newFiles.value.length) {
+    const mediaAdded = await addMedia(id, newFiles.value)
+    if (!mediaAdded) {
+      // Error tambah media: tampilkan tapi TETAP di halaman
+      toast.error(error.value ?? 'Kenangan disimpan, tapi gagal menambah media baru.')
+      return
+    }
   }
+
+  toast.success('Kenangan berhasil diperbarui.')
+  if (form.album_id) router.push(`/albums/${form.album_id}`)
+  else router.push(`/memories/${id}`)
 }
 </script>
 
@@ -159,7 +274,7 @@ const handleSubmit = async () => {
           Media
         </p>
 
-        <!-- Existing media -->
+        <!-- Existing media — FIX: tampilkan ikon play untuk video yang ada -->
         <div v-if="memory.media?.length">
           <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Media yang ada</label>
           <div class="grid grid-cols-4 gap-2">
@@ -169,6 +284,15 @@ const handleSubmit = async () => {
               class="relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 group"
             >
               <img :src="m.thumbnail_url ?? m.url" class="w-full h-full object-cover" />
+              <!-- FIX: indikator video untuk media existing -->
+              <div
+                v-if="m.type === 'video'"
+                class="absolute inset-0 flex items-center justify-center pointer-events-none"
+              >
+                <div class="bg-black/50 rounded-full p-1.5">
+                  <Icon name="heroicons:play" class="w-4 h-4 text-white" />
+                </div>
+              </div>
               <button
                 type="button"
                 class="absolute top-1 cursor-pointer right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-600 transition"
@@ -182,14 +306,27 @@ const handleSubmit = async () => {
 
         <!-- Add new media -->
         <div>
-          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">Tambah Foto/Video Baru</label>
+          <label class="block text-sm text-gray-500 dark:text-gray-400 mb-2">
+            Tambah Foto/Video Baru
+            <span class="text-gray-400 font-normal text-xs ml-1">(maks. 2MB/file)</span>
+          </label>
           <div class="grid grid-cols-4 gap-2">
             <div
               v-for="(p, i) in newPreviews"
               :key="i"
               class="relative aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800"
             >
-              <img :src="p" class="w-full h-full object-cover" />
+              <!-- FIX: selalu <img>, preview sudah berupa dataURL/objectURL -->
+              <img :src="p" class="w-full h-full object-cover" :class="{ 'opacity-80': newTypes[i] === 'video' }" />
+              <!-- FIX: badge video overlay -->
+              <div
+                v-if="newTypes[i] === 'video'"
+                class="absolute inset-0 flex items-center justify-center pointer-events-none"
+              >
+                <div class="bg-black/50 rounded-full p-2">
+                  <Icon name="heroicons:play" class="w-5 h-5 text-white" />
+                </div>
+              </div>
               <button
                 type="button"
                 class="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition"
@@ -393,7 +530,7 @@ const handleSubmit = async () => {
         </div>
       </div>
 
-      <!-- Error -->
+      <!-- Error — FIX: selalu tampil di sini, tidak redirect -->
       <div
         v-if="error"
         class="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 text-sm"
