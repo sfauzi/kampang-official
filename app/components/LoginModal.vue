@@ -6,7 +6,6 @@ const { loginWithGoogle } = useAuth()
 const handleLogin = () => {
   // Kirim redirectTo saat ini ke loginWithGoogle
   loginWithGoogle(redirectTo.value)
-  close(true)
 }
 
 onMounted(() => {
