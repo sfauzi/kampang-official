@@ -27,6 +27,7 @@ const { confirm } = useConfirm();
 const category = ref("");
 const collab = ref("");
 const page = ref(1);
+const { setPageSeo } = useSeoMetaHelper()
 
 const load = () =>
   fetchMyAlbums({
@@ -42,7 +43,15 @@ watch([category, collab], () => {
   load();
 });
 watch(page, load);
-onMounted(load);
+onMounted(() => {
+  setPageSeo(
+    'Albumku',
+    'Lihat semua album yang telah Anda simpan di Kampang Official. Kelola privasi, kategori, dan bagikan dengan komunitas.',
+    '/dashboard/albums'
+  )
+  
+  load()
+})
 
 // Pisahkan: undangan pending vs album biasa
 const pendingInvitations = computed(() =>

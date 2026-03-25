@@ -15,8 +15,11 @@ const { myAlbums, fetchMyAlbums }   = useAlbums()
 const toast       = useToast()
 const { confirm } = useConfirm()
 const { user }    = useAuth()
+const { setMemorySeo } = useSeoMetaHelper()
+
 
 onMounted(async () => {
+  setMemorySeo(memory.value)
   await Promise.all([
     fetchMemory(id),
     fetchTags(),
@@ -35,6 +38,10 @@ onMounted(async () => {
     form.location_name = memory.value.location.name ?? ''
     form.tag_ids       = memory.value.tags?.map(t => t.id) ?? []
   }
+})
+
+watch(memory, (newMemory) => {
+  setMemorySeo(newMemory)  // ← Update SEO jika memory berubah
 })
 
 watchEffect(() => {

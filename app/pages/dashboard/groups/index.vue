@@ -18,13 +18,22 @@ const { confirm } = useConfirm()
 
 const category = ref('')
 const page     = ref(1)
+const { setPageSeo } = useSeoMetaHelper()
 
 const load = () =>
   fetchMyGroups({ category: (category.value as any) || undefined, page: page.value, per_page: 12 })
 
 watch([category], () => { page.value = 1; load() })
 watch(page, load)
-onMounted(load)
+onMounted(() => {
+  setPageSeo(
+    'Grupku',
+    'Lihat semua grup yang telah Anda simpan di Kampang Official. Kelola privasi, kategori, dan bagikan dengan komunitas.',
+    '/dashboard/groups'
+  )
+  
+  load()
+})
 
 const handleLeave = async (id: string, name: string, role: string) => {
   if (role === 'owner') {

@@ -16,6 +16,8 @@ definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 const route  = useRoute()
 const router = useRouter()
 const id     = route.params.id as string
+const { setAlbumSeo } = useSeoMetaHelper()
+
 
 const {
   album, loading, error,
@@ -29,6 +31,8 @@ const { confirm } = useConfirm()
 const { user }    = useAuth()
 
 onMounted(async () => {
+  setAlbumSeo(album.value)  // ← Set SEO
+
   await Promise.all([fetchAlbum(id), fetchTags(), fetchGroups({ per_page: 50 })])
 
   if (album.value) {
@@ -46,6 +50,10 @@ onMounted(async () => {
 
   // Load users jika sudah kolaboratif
   if (album.value?.is_collaborative) fetchAllUsers()
+})
+
+watch(album, (newAlbum) => {
+  setAlbumSeo(newAlbum)
 })
 
 // Guard: bukan creator → redirect

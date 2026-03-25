@@ -21,6 +21,8 @@ const sort = ref<"memory_date" | "created_at">("memory_date");
 const page = ref(1);
 const showMobileFilters = ref(false)
 
+const { setPageSeo } = useSeoMetaHelper()
+
 const load = () =>
   fetchMemories({
     category: category.value || undefined,
@@ -37,6 +39,12 @@ watch(page, load);
 onMounted(load);
 
 onMounted(async () => {
+  setPageSeo(
+    'Timeline Kenangan',
+    'Lihat timeline kenangan publik dari komunitas Kampang Official. Bagikan dan temukan momen berharga dari orang-orang terdekat.',
+    '/memories'
+  )
+  
   await fetchMemories({ /* params yang sudah ada */ })
 })
 

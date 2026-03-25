@@ -9,8 +9,16 @@ const { isAuthenticated, user } = useAuth()
 const toast = useToast()
 const { confirm } = useConfirm()
 const router = useRouter()
+const { setAlbumSeo } = useSeoMetaHelper()
 
-onMounted(() => fetchAlbum(id))
+onMounted(() => {
+  fetchAlbum(id)
+  setAlbumSeo(album.value)  // ← Set SEO
+})
+
+watch(album, (newAlbum) => {
+  setAlbumSeo(newAlbum)
+})
 
 const isCreator = computed(() => album.value?.creator?.id === user.value?.id)
 const canContribute = computed(() => {

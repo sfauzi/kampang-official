@@ -18,6 +18,7 @@ const { user: authUser }              = useAuth()
 const config = useRuntimeConfig()
 const toast  = useToast()
 const router = useRouter()
+const { setPageSeo } = useSeoMetaHelper()
 
 const form = reactive<StoreGroupPayload>({
   name:          '',
@@ -28,6 +29,15 @@ const form = reactive<StoreGroupPayload>({
   location_name: '',
   latitude:      null,
   longitude:     null,
+})
+
+onMounted(() => {
+  setPageSeo(
+    'Buat Grup',
+    'Buat kenangan dan abadikan',
+    '/dashboard/groups/create'
+  )
+  
 })
 
 const coverPreview = ref<string | null>(null)

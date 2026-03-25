@@ -23,9 +23,12 @@ const { user } = useAuth()
 const config   = useRuntimeConfig()
 const toast    = useToast()
 const { confirm } = useConfirm()
+const { setGroupSeo } = useSeoMetaHelper()
+
 
 onMounted(async () => {
   await fetchGroup(id)
+  setGroupSeo(group.value)  // ← Set SEO
   if (group.value) {
     form.name          = group.value.name
     form.description   = group.value.description ?? ''
@@ -34,6 +37,10 @@ onMounted(async () => {
     form.location_name = group.value.location.name ?? ''
   }
   await fetchMembers(id)
+})
+
+watch(group, (newGroup) => {
+  setGroupSeo(newGroup)
 })
 
 // Guard: hanya jalan setelah group loaded (bukan null) — FIX false redirect

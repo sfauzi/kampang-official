@@ -13,10 +13,13 @@ const { isAuthenticated, user: currentUser } = useAuth()
 const profile = ref<UserBrief | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const { setUserSeo } = useSeoMetaHelper()
+  
 
 onMounted(async () => {
     try {
         profile.value = await api<UserBrief>(`/api/users/${id}`)
+        setUserSeo(profile.value)  // ← Set SEO
         await fetchMemories({ user_id: id, per_page: 12 })
     } catch (e: any) {
         error.value = e?.data?.message ?? 'Pengguna tidak ditemukan.'
@@ -25,6 +28,9 @@ onMounted(async () => {
     }
 })
 
+watch(profile, (newProfile) => {
+  setUserSeo(newProfile)
+})
 const isOwnProfile = computed(() => currentUser.value?.id === id)
 </script>
 

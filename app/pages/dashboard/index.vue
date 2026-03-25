@@ -6,6 +6,8 @@ const { myMemories, fetchMyMemories, togglePin }       = useMemories()
 const { myGroups,   fetchMyGroups }                    = useGroups()
 const { myAlbums,   fetchMyAlbums }                    = useAlbums()
 const toast = useToast()
+const { setPageSeo } = useSeoMetaHelper()
+
 
 const isVideoMedia = (media: any): boolean => {
   const type = String(media?.type ?? media?.media_type ?? '').toLowerCase()
@@ -26,6 +28,12 @@ const getMediaCardPreview = (media: any): string | null => {
 }
 
 onMounted(async () => {
+  setPageSeo(
+    'Dashboard',
+    'Kelola kenangan, album, dan grup Anda di dashboard Kampang Official. Lihat statistik dan aktivitas terbaru Anda.',
+    '/dashboard'
+  )
+  
   await Promise.all([
     // Fetch data milik user sendiri — bukan data publik
     fetchMyMemories({ per_page: 6, sort: 'created_at' }),

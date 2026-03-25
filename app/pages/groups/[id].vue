@@ -11,11 +11,17 @@ const { confirm } = useConfirm()
 const id = route.params.id as string
 const activeTab = ref<'memories' | 'members'>('memories')
 const alreadyJoinedMessage = 'Kamu sudah bergabung di grup ini.'
+const { setGroupSeo } = useSeoMetaHelper()
 
 onMounted(async () => {
   await fetchGroup(id)
+  setGroupSeo(group.value)  // ← Set SEO
   await fetchMembers(id)
   await fetchMemories({ group_id: id, per_page: 12 })
+})
+
+watch(group, (newGroup) => {
+  setGroupSeo(newGroup)
 })
 
 const isOwner = computed(() => group.value?.my_role === 'owner')

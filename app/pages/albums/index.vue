@@ -26,6 +26,8 @@ const category = ref("");
 const collab = ref("");
 const page = ref(1);
 
+const { setPageSeo } = useSeoMetaHelper()
+
 const load = () =>
   fetchAlbums({
     category: category.value || undefined,
@@ -40,7 +42,15 @@ watch([category, collab], () => {
   load();
 });
 watch(page, load);
-onMounted(load);
+onMounted(() => {
+  setPageSeo(
+    'Album Publik',
+    'Jelajahi album publik di Kampang Official. Koleksi momen spesial yang dibagikan oleh komunitas kami.',
+    '/albums'
+  )
+  
+  load()
+})
 
 const handleRespond = async (
   albumId: string,

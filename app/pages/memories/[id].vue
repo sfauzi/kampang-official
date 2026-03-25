@@ -6,6 +6,7 @@ import type { ReactionType, Comment, PaginatedResponse, Memory } from '~/types/k
 
 const route = useRoute()
 const id    = route.params.id as string
+const { setMemorySeo } = useSeoMetaHelper()
 
 const {
   memory, comments, loading, error,
@@ -150,6 +151,7 @@ const onWindowFocus = async () => {
 
 onMounted(async () => {
   await fetchMemory(id)
+  setMemorySeo(memory.value)
   if (memory.value) await fetchComments(id)
 
   lastCommentsSignature.value = commentsSignature(comments.value as Comment[])
@@ -213,6 +215,10 @@ onMounted(async () => {
   })
 
   onUnmounted(unlisten)
+})
+
+watch(memory, (newMemory) => {
+  setMemorySeo(newMemory)  // ← Update SEO jika memory berubah
 })
 
 onUnmounted(() => {

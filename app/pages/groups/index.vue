@@ -25,6 +25,7 @@ const alreadyJoinedMessage = 'Kamu sudah bergabung di grup ini.'
 const search   = ref('')
 const category = ref<Category | ''>('')
 const page     = ref(1)
+const { setPageSeo } = useSeoMetaHelper()
 
 const load = () => fetchGroups({
   search:   search.value || undefined,
@@ -40,8 +41,15 @@ watch(search, () => {
 })
 watch(category, () => { page.value = 1; load() })
 watch(page, load)
-onMounted(load)
-
+onMounted(() => {
+  setPageSeo(
+    'Komunitas Grup',
+    'Temukan dan bergabung dengan grup komunitas di Kampang Official. Bagikan pengalaman dengan orang-orang yang memiliki minat yang sama.',
+    '/groups'
+  )
+  
+  fetchGroups({/* ...params */})
+})
 const handleJoin = async (groupId: string, privacy: string) => {
   if (!isAuthenticated.value) {
     toast.info('Kamu harus login untuk bergabung.')

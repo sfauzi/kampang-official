@@ -22,12 +22,22 @@ const category = ref('')
 const sort     = ref<'memory_date' | 'created_at'>('created_at')
 const page     = ref(1)
 
+const { setPageSeo } = useSeoMetaHelper()
+
 const load = () =>
   fetchMyMemories({ category: category.value || undefined, sort: sort.value, page: page.value, per_page: 15 })
 
 watch([category, sort], () => { page.value = 1; load() })
 watch(page, load)
-onMounted(load)
+onMounted(() => {
+  setPageSeo(
+    'Kenanganku',
+    'Lihat semua kenangan yang telah Anda simpan di Kampang Official. Kelola privasi, kategori, dan bagikan dengan komunitas.',
+    '/dashboard/memories'
+  )
+  
+  load()
+})
 
 const handleDelete = async (id: string, title: string) => {
   const ok = await confirm({

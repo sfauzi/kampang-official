@@ -13,36 +13,44 @@ definePageMeta({ layout: 'dashboard', middleware: 'auth' })
 import type { StoreAlbumPayload, Category, Privacy } from '~/types/kenangan'
 
 const { createAlbum, loading, error } = useAlbums()
-const { tags: allTags, fetchTags }    = useTags()
-const { groups, fetchGroups }         = useGroups()
+const { tags: allTags, fetchTags } = useTags()
+const { groups, fetchGroups } = useGroups()
 const config = useRuntimeConfig()
-const toast  = useToast()
+const toast = useToast()
 const router = useRouter()
-const route  = useRoute()
+const route = useRoute()
+const { setPageSeo } = useSeoMetaHelper()
 
-onMounted(() => Promise.all([fetchTags(), fetchGroups({ per_page: 50 })]))
+onMounted(() => Promise.all([
+  setPageSeo(
+    'Buat Album',
+    'Buat album dan abadikan',
+    '/dashboard/memories/create'
+  ),
+  fetchTags(), fetchGroups({ per_page: 50 })]
+))
 
 const form = reactive<StoreAlbumPayload>({
-  title:            '',
-  description:      '',
-  group_id:         (route.query.group_id as string) ?? null,
-  event_date:       '',
-  event_end_date:   '',
-  category:         'other',
-  privacy:          'public',
+  title: '',
+  description: '',
+  group_id: (route.query.group_id as string) ?? null,
+  event_date: '',
+  event_end_date: '',
+  category: 'other',
+  privacy: 'public',
   is_collaborative: false,
-  location_name:    '',
-  latitude:         null,
-  longitude:        null,
-  tag_ids:          [],
-  contributor_ids:  [],
+  location_name: '',
+  latitude: null,
+  longitude: null,
+  tag_ids: [],
+  contributor_ids: [],
 })
 
 // ── Kontributor ──────────────────────────────────────────────────────────────
 
 // Daftar semua user dari /api/users/names (untuk search)
-const allUsers     = ref<{ id: string; name: string; avatar: string | null; notes: string | null }[]>([])
-const userSearch   = ref('')
+const allUsers = ref<{ id: string; name: string; avatar: string | null; notes: string | null }[]>([])
+const userSearch = ref('')
 const loadingUsers = ref(false)
 
 // User yang sudah dipilih sebagai kontributor
@@ -54,7 +62,7 @@ const fetchUsers = async () => {
   try {
     const data = await $fetch<any[]>(`${config.public.apiBase}/api/users/names`)
     allUsers.value = data
-  } catch {}
+  } catch { }
   loadingUsers.value = false
 }
 
@@ -126,16 +134,16 @@ const handleSubmit = async () => {
 }
 
 const categoryOptions: { label: string; value: Category }[] = [
-  { label: 'Sekolah',   value: 'school' },
+  { label: 'Sekolah', value: 'school' },
   { label: 'Pendakian', value: 'hiking' },
   { label: 'Traveling', value: 'traveling' },
-  { label: 'Lainnya',   value: 'other' },
+  { label: 'Lainnya', value: 'other' },
 ]
 
 const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
-  { label: 'Publik',  value: 'public',  desc: 'Semua orang bisa melihat' },
-  { label: 'Grup',    value: 'group',   desc: 'Hanya anggota grup' },
-  { label: 'Privat',  value: 'private', desc: 'Hanya kamu' },
+  { label: 'Publik', value: 'public', desc: 'Semua orang bisa melihat' },
+  { label: 'Grup', value: 'group', desc: 'Hanya anggota grup' },
+  { label: 'Privat', value: 'private', desc: 'Hanya kamu' },
 ]
 </script>
 
@@ -144,10 +152,7 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
 
     <!-- Header -->
     <div class="flex items-center gap-3 mb-6 animate-[fadeIn_0.4s_ease_forwards]">
-      <NuxtLink
-        to="/albums"
-        class="p-2 rounded-xl text-gray-400 hover:text-gray-200 hover:bg-white/5 transition"
-      >
+      <NuxtLink to="/albums" class="p-2 rounded-xl text-gray-400 hover:text-gray-200 hover:bg-white/5 transition">
         <Icon name="heroicons:arrow-left" class="w-5 h-5" />
       </NuxtLink>
       <div>
@@ -158,7 +163,8 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
     <form @submit.prevent="handleSubmit" class="space-y-4 animate-[slideUp_0.4s_ease_forwards]">
 
       <!-- ── CARD: Judul & Deskripsi ── -->
-      <div class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
+      <div
+        class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
           <Icon name="heroicons:document-text" class="w-4 h-4 text-amber-500" />
           Informasi Album
@@ -169,29 +175,23 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
           <label class="block text-sm text-gray-500 dark:text-neutral-400 mb-1.5">
             Judul Album <span class="text-red-500">*</span>
           </label>
-          <input
-            v-model="form.title"
-            type="text"
+          <input v-model="form.title" type="text"
             class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-neutral-600 focus:outline-none transition"
-            placeholder="Contoh: Lebaran 2024 Keluarga Besar"
-            maxlength="200"
-          />
+            placeholder="Contoh: Lebaran 2024 Keluarga Besar" maxlength="200" />
         </div>
 
         <!-- Deskripsi -->
         <div>
           <label class="block text-sm text-gray-500 dark:text-neutral-400 mb-1.5">Deskripsi</label>
-          <textarea
-            v-model="form.description"
+          <textarea v-model="form.description"
             class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-neutral-600 focus:outline-none transition h-24 resize-none"
-            placeholder="Ceritakan tentang album ini..."
-            maxlength="3000"
-          />
+            placeholder="Ceritakan tentang album ini..." maxlength="3000" />
         </div>
       </div>
 
       <!-- ── CARD: Tanggal Event ── -->
-      <div class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
+      <div
+        class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
           <Icon name="heroicons:calendar-days" class="w-4 h-4 text-amber-500" />
           Tanggal Event
@@ -199,26 +199,21 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-sm text-gray-500 dark:text-neutral-400 mb-1.5">Tanggal Mulai</label>
-            <input
-              v-model="form.event_date"
-              type="date"
-              class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition [color-scheme:dark]"
-            />
+            <input v-model="form.event_date" type="date"
+              class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition [color-scheme:dark]" />
           </div>
           <div>
             <label class="block text-sm text-gray-500 dark:text-neutral-400 mb-1.5">Tanggal Selesai</label>
-            <input
-              v-model="form.event_end_date"
-              type="date"
+            <input v-model="form.event_end_date" type="date"
               class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition [color-scheme:dark]"
-              :min="form.event_date ?? ''"
-            />
+              :min="form.event_date ?? ''" />
           </div>
         </div>
       </div>
 
       <!-- ── CARD: Kategori & Privasi ── -->
-      <div class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
+      <div
+        class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
           <Icon name="heroicons:adjustments-horizontal" class="w-4 h-4 text-amber-500" />
           Kategori & Privasi
@@ -228,10 +223,8 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
             <label class="block text-sm text-gray-500 dark:text-neutral-400 mb-1.5">
               Kategori <span class="text-red-500">*</span>
             </label>
-            <select
-              v-model="form.category"
-              class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition appearance-none cursor-pointer"
-            >
+            <select v-model="form.category"
+              class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition appearance-none cursor-pointer">
               <option v-for="opt in categoryOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
             </select>
           </div>
@@ -239,10 +232,8 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
             <label class="block text-sm text-gray-500 dark:text-neutral-400 mb-1.5">
               Privasi <span class="text-red-500">*</span>
             </label>
-            <select
-              v-model="form.privacy"
-              class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition appearance-none cursor-pointer"
-            >
+            <select v-model="form.privacy"
+              class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition appearance-none cursor-pointer">
               <option v-for="opt in privacyOptions" :key="opt.value" :value="opt.value">
                 {{ opt.label }} — {{ opt.desc }}
               </option>
@@ -252,7 +243,8 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
       </div>
 
       <!-- ── CARD: Grup & Lokasi ── -->
-      <div class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
+      <div
+        class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-4">
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
           <Icon name="heroicons:map-pin" class="w-4 h-4 text-amber-500" />
           Grup & Lokasi
@@ -263,10 +255,8 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
           <label class="block text-sm text-gray-500 dark:text-neutral-400 mb-1.5">
             Tautkan ke Grup <span class="text-gray-400 dark:text-neutral-500 text-xs">(opsional)</span>
           </label>
-          <select
-            v-model="form.group_id"
-            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition appearance-none cursor-pointer"
-          >
+          <select v-model="form.group_id"
+            class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm focus:outline-none transition appearance-none cursor-pointer">
             <option :value="null">— Tanpa grup —</option>
             <option v-for="g in groups" :key="g.id" :value="g.id">{{ g.name }}</option>
           </select>
@@ -278,19 +268,18 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
             Lokasi Event <span class="text-gray-400 dark:text-neutral-500 text-xs">(opsional)</span>
           </label>
           <div class="relative">
-            <Icon name="heroicons:map-pin" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-600 pointer-events-none" />
-            <input
-              v-model="form.location_name"
-              type="text"
+            <Icon name="heroicons:map-pin"
+              class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-600 pointer-events-none" />
+            <input v-model="form.location_name" type="text"
               class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-neutral-600 focus:outline-none transition"
-              placeholder="Contoh: Pantai Kuta, Bali"
-            />
+              placeholder="Contoh: Pantai Kuta, Bali" />
           </div>
         </div>
       </div>
 
       <!-- ── CARD: Album Kolaboratif ── -->
-      <div class="bg-white dark:bg-[#181818] rounded-2xl shadow-sm border border-gray-100 dark:border-neutral-800 overflow-hidden">
+      <div
+        class="bg-white dark:bg-[#181818] rounded-2xl shadow-sm border border-gray-100 dark:border-neutral-800 overflow-hidden">
         <div class="flex items-center gap-3 p-5">
           <div class="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
             <Icon name="heroicons:user-group" class="w-5 h-5 text-amber-500" />
@@ -299,28 +288,20 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
             <p class="font-semibold text-sm text-gray-900 dark:text-white">Album Kolaboratif</p>
             <p class="text-xs text-gray-400 mt-0.5">Izinkan orang lain menambahkan kenangan ke album ini</p>
           </div>
-          <button
-            type="button"
+          <button type="button"
             class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200"
             :class="form.is_collaborative ? 'bg-amber-500' : 'bg-gray-200 dark:bg-gray-700'"
-            @click="form.is_collaborative = !form.is_collaborative"
-          >
+            @click="form.is_collaborative = !form.is_collaborative">
             <span
               class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform duration-200"
-              :class="form.is_collaborative ? 'translate-x-5' : 'translate-x-0'"
-            />
+              :class="form.is_collaborative ? 'translate-x-5' : 'translate-x-0'" />
           </button>
         </div>
 
         <!-- Panel undang kontributor -->
-        <Transition
-          enter-active-class="transition-all duration-200 ease-out"
-          enter-from-class="opacity-0 max-h-0"
-          enter-to-class="opacity-100 max-h-[400px]"
-          leave-active-class="transition-all duration-150 ease-in"
-          leave-from-class="opacity-100 max-h-[400px]"
-          leave-to-class="opacity-0 max-h-0"
-        >
+        <Transition enter-active-class="transition-all duration-200 ease-out" enter-from-class="opacity-0 max-h-0"
+          enter-to-class="opacity-100 max-h-[400px]" leave-active-class="transition-all duration-150 ease-in"
+          leave-from-class="opacity-100 max-h-[400px]" leave-to-class="opacity-0 max-h-0">
           <div v-if="form.is_collaborative" class="border-t border-gray-100 dark:border-neutral-800 p-5 space-y-3">
             <p class="text-xs font-semibold text-gray-500 dark:text-gray-400">
               Undang Kontributor
@@ -329,27 +310,23 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
 
             <!-- Search user -->
             <div class="relative">
-              <Icon name="heroicons:magnifying-glass" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-600 pointer-events-none" />
-              <input
-                v-model="userSearch"
-                type="text"
+              <Icon name="heroicons:magnifying-glass"
+                class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-600 pointer-events-none" />
+              <input v-model="userSearch" type="text"
                 class="w-full pl-10 pr-8 py-3 rounded-xl bg-gray-50 dark:bg-[#101010] border border-gray-200 dark:border-neutral-800 focus:border-amber-500 dark:focus:border-amber-500 text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-neutral-600 focus:outline-none transition"
-                placeholder="Cari nama pengguna..."
-              />
-              <span v-if="loadingUsers" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">...</span>
+                placeholder="Cari nama pengguna..." />
+              <span v-if="loadingUsers"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">...</span>
             </div>
 
             <!-- Daftar hasil pencarian -->
             <div v-if="filteredUsers.length" class="space-y-1 max-h-48 overflow-y-auto">
-              <button
-                v-for="u in filteredUsers"
-                :key="u.id"
-                type="button"
+              <button v-for="u in filteredUsers" :key="u.id" type="button"
                 class="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#101010] transition text-left"
                 :class="isSelected(u.id) ? 'bg-amber-500/5 ring-1 ring-amber-500/30' : ''"
-                @click="toggleContributor({ id: u.id, name: u.name, avatar: u.avatar })"
-              >
-                <img :src="u.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(u.name)}`" class="w-8 h-8 rounded-full object-cover shrink-0" />
+                @click="toggleContributor({ id: u.id, name: u.name, avatar: u.avatar })">
+                <img :src="u.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(u.name)}`"
+                  class="w-8 h-8 rounded-full object-cover shrink-0" />
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ u.name }}</p>
                   <p v-if="u.notes" class="text-xs text-gray-400 truncate">{{ u.notes }}</p>
@@ -363,18 +340,13 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
 
             <!-- Chips kontributor terpilih -->
             <div v-if="selectedContributors.length" class="flex flex-wrap gap-2 pt-1">
-              <div
-                v-for="c in selectedContributors"
-                :key="c.id"
-                class="flex items-center gap-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full pl-1.5 pr-2 py-0.5"
-              >
-                <img :src="c.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(c.name)}`" class="w-5 h-5 rounded-full object-cover" />
+              <div v-for="c in selectedContributors" :key="c.id"
+                class="flex items-center gap-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full pl-1.5 pr-2 py-0.5">
+                <img :src="c.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(c.name)}`"
+                  class="w-5 h-5 rounded-full object-cover" />
                 <span class="text-xs font-medium">{{ c.name }}</span>
-                <button
-                  type="button"
-                  class="text-amber-500/70 hover:text-red-500 leading-none transition"
-                  @click="removeContributor(c.id)"
-                >
+                <button type="button" class="text-amber-500/70 hover:text-red-500 leading-none transition"
+                  @click="removeContributor(c.id)">
                   <Icon name="heroicons:x-mark" class="w-3 h-3" />
                 </button>
               </div>
@@ -388,49 +360,40 @@ const privacyOptions: { label: string; value: Privacy; desc: string }[] = [
       </div>
 
       <!-- ── CARD: Tags ── -->
-      <div v-if="allTags.length" class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-3">
+      <div v-if="allTags.length"
+        class="bg-white dark:bg-[#181818] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-neutral-800 space-y-3">
         <p class="text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
           <Icon name="heroicons:tag" class="w-4 h-4 text-amber-500" />
           Tag
         </p>
         <div class="flex flex-wrap gap-2">
-          <button
-            v-for="tag in allTags"
-            :key="tag.id"
-            type="button"
+          <button v-for="tag in allTags" :key="tag.id" type="button"
             class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border"
             :class="form.tag_ids?.includes(tag.id)
               ? 'bg-amber-500 border-amber-500 text-white shadow-sm'
               : 'bg-gray-100 dark:bg-[#101010] border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-amber-500 hover:text-amber-600 dark:hover:text-amber-400'"
-            @click="toggleTag(tag.id)"
-          >
+            @click="toggleTag(tag.id)">
             #{{ tag.name }}
           </button>
         </div>
       </div>
 
       <!-- Error -->
-      <div
-        v-if="error"
-        class="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 text-sm"
-      >
+      <div v-if="error"
+        class="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 text-sm">
         <Icon name="heroicons:exclamation-circle" class="w-4 h-4 shrink-0" />
         {{ error }}
       </div>
 
       <!-- Actions -->
       <div class="flex gap-3 pt-1">
-        <NuxtLink
-          to="/albums"
-          class="flex-1 px-5 py-3 rounded-xl bg-gray-100 dark:bg-[#101010] hover:bg-neutral-200 dark:hover:bg-[#181818] text-gray-700 dark:text-gray-300 font-semibold text-sm transition border border-gray-200 dark:border-neutral-800 text-center"
-        >
+        <NuxtLink to="/albums"
+          class="flex-1 px-5 py-3 rounded-xl bg-gray-100 dark:bg-[#101010] hover:bg-neutral-200 dark:hover:bg-[#181818] text-gray-700 dark:text-gray-300 font-semibold text-sm transition border border-gray-200 dark:border-neutral-800 text-center">
           Batal
         </NuxtLink>
-        <button
-          type="submit"
+        <button type="submit"
           class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="loading"
-        >
+          :disabled="loading">
           <Icon v-if="loading" name="heroicons:arrow-path" class="w-4 h-4 animate-spin" />
           <Icon v-else name="heroicons:check" class="w-4 h-4" />
           {{ loading ? 'Menyimpan...' : 'Buat Album' }}

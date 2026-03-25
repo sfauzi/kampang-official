@@ -13,6 +13,7 @@ const albumsComposable = useAlbums()
 const toast  = useToast()
 const router = useRouter()
 const route  = useRoute()
+const { setPageSeo } = useSeoMetaHelper()
 
 const fromAlbumId = (route.query.album_id as string) || null
 const fromGroupId = (route.query.group_id as string) || null
@@ -70,6 +71,12 @@ const isValidMediaFile = (file: File): { valid: boolean; error?: string } => {
 }
 
 onMounted(async () => {
+  setPageSeo(
+    'Buat Kenangan',
+    'Buat kenangan dan abadikan',
+    '/dashboard/memories/create'
+  )
+
   await Promise.all([
     fetchTags(),
     fetchGroups({ per_page: 50 }),
