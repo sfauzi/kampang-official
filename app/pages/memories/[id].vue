@@ -228,6 +228,19 @@ const activeMedia = ref(0)
 const commentText       = ref('')
 const replyTo           = ref<{ id: string; name: string } | null>(null)
 const submittingComment = ref(false)
+const commentFormRef    = ref<HTMLElement | null>(null)
+const commentInputRef   = ref<HTMLTextAreaElement | null>(null)
+
+const handleReplyClick = async (c: Comment) => {
+  replyTo.value = { id: c.id, name: c.user?.name ?? '' }
+
+  await nextTick()
+  commentFormRef.value?.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  })
+  commentInputRef.value?.focus()
+}
 
 const reactionEmoji: Record<ReactionType, string> = {
   love: '❤️', haha: '😂', wow: '😮', sad: '😢', nostalgic: '🥹',
@@ -595,7 +608,7 @@ const getMediaThumb = (m: any): string | null => {
         </h2>
 
         <!-- Form komentar -->
-        <div v-if="isAuthenticated" class="mb-6">
+        <div v-if="isAuthenticated" ref="commentFormRef" class="mb-6">
           <div
             v-if="replyTo"
             class="flex items-center gap-2 text-xs text-gray-400 mb-2 bg-gray-50 dark:bg-[#101010] rounded-xl px-3 py-2"
@@ -613,6 +626,7 @@ const getMediaThumb = (m: any): string | null => {
             />
             <div class="flex-1 flex gap-2">
               <textarea
+                ref="commentInputRef"
                 v-model="commentText"
                 class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-neutral-800 bg-white dark:bg-[#101010] text-gray-900 dark:text-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-brand transition resize-none"
                 :placeholder="replyTo ? 'Tulis balasan...' : 'Tulis komentar...'"
@@ -673,7 +687,7 @@ const getMediaThumb = (m: any): string | null => {
                   <button
                     v-if="isAuthenticated"
                     class="hover:text-brand cursor-pointer hover:text-neutral-600 font-medium transition-colors flex items-center gap-1 text-neutral-500"
-                    @click="replyTo = { id: c.id, name: c.user?.name ?? '' }"
+                    @click="handleReplyClick(c)"
                   >
                     <Icon name="heroicons:arrow-uturn-right" class="w-3 h-3" />
                     Balas
