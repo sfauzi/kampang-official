@@ -252,6 +252,11 @@ const reactionEmoji: Record<ReactionType, string> = {
   love: '❤️', haha: '😂', wow: '😮', sad: '😢', nostalgic: '🥹',
 }
 
+const showReactionsModal = ref(false)
+const openReactionsModal = () => {
+  showReactionsModal.value = true
+}
+
 const handleDeleteMemory = async () => {
   const ok = await confirm({
     title: 'Hapus kenangan?',
@@ -601,7 +606,12 @@ const getMediaThumb = (m: any): string | null => {
           >
             {{ emoji }}
           </button>
-          <span class="text-sm text-neutral-500 ml-2">{{ memory.reactions_count ?? 0 }} reaksi</span>
+          <button
+            class="text-sm text-neutral-500 ml-2 hover:text-brand transition-colors cursor-pointer"
+            @click="openReactionsModal"
+          >
+            {{ memory.reactions_count ?? 0 }} reaksi
+          </button>
         </div>
       </div>
 
@@ -743,6 +753,12 @@ const getMediaThumb = (m: any): string | null => {
         </ul>
       </div>
     </div>
+
+    <MemoryReactionsModal
+      v-model="showReactionsModal"
+      :memory-id="memory?.id ?? null"
+      :title="memory?.title ?? null"
+    />
 
     <BaseToast />
     <BaseConfirm />

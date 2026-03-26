@@ -103,6 +103,16 @@ const reactionEmoji: Record<string, string> = {
   nostalgic: "🥹",
 };
 
+const showReactionsModal = ref(false)
+const selectedReactionMemoryId = ref<string | null>(null)
+const selectedReactionMemoryTitle = ref<string | null>(null)
+
+const openReactionsModal = (memory: { id: string; title?: string | null }) => {
+  selectedReactionMemoryId.value = memory.id
+  selectedReactionMemoryTitle.value = memory.title ?? null
+  showReactionsModal.value = true
+}
+
 const privacyBadgeClass = (privacy: string) => {
   if (privacy === "group")
     return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
@@ -423,7 +433,12 @@ const getMediaPreview = (media: any): string | null => {
               {{ emoji }}
             </button>
           </div>
-          <span class="text-xs text-gray-400">{{ m.reactions_count ?? 0 }} reaksi</span>
+          <button
+            class="text-xs text-gray-400 hover:text-brand transition-colors cursor-pointer"
+            @click="openReactionsModal(m)"
+          >
+            {{ m.reactions_count ?? 0 }} reaksi
+          </button>
           <NuxtLink
             :to="`/memories/${m.id}`"
             class="ml-auto inline-flex items-center gap-1 text-xs text-gray-400 hover:text-brand transition-colors"
@@ -454,6 +469,12 @@ const getMediaPreview = (media: any): string | null => {
         {{ p }}
       </button>
     </div>
+
+    <MemoryReactionsModal
+      v-model="showReactionsModal"
+      :memory-id="selectedReactionMemoryId"
+      :title="selectedReactionMemoryTitle"
+    />
 
     <BaseToast />
   </div>
