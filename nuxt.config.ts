@@ -91,14 +91,46 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: [
-    '@nuxt/icon',
-    '@nuxt/image',
-    '@nuxtjs/google-fonts',
-    '@nuxtjs/seo',
-    'nuxt-auth-sanctum',
-    'nuxt-google-auth'
-  ],
+  modules: ['@nuxt/icon', '@nuxt/image', '@nuxtjs/google-fonts', '@nuxtjs/seo', 'nuxt-auth-sanctum', 'nuxt-google-auth', '@vite-pwa/nuxt'],
+
+  pwa: {
+    /* PWA options */
+    manifest: {
+      name: 'Kampang Official',
+      short_name: 'Kampang',
+      description: 'Kampang Official adalah platform dan blog modern yang memungkinkan pengguna untuk berbagi cerita, pengalaman, dan pemikiran. Dengan fitur-fitur inovatif dan antarmuka yang user-friendly, Kampang Official memberikan ruang bagi individu untuk mengekspresikan diri mereka tanpa batasan, sambil tetap menjaga privasi dan keamanan. Bergabunglah dengan komunitas kami dan temukan berbagai cerita menarik dari seluruh dunia!',
+      icons: [
+        {
+          src: '/icons/icon_64x64.png',
+          sizes: '64x64',
+          type: 'image/png',
+        },
+        {
+          src: '/icons/icon_144x144.png',
+          sizes: '144x144',
+          type: 'image/png',
+        },
+        {
+          src: '/icons/icon_192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: '/icons/icon_512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ]
+    },
+    workbox: {
+      /* Workbox options */
+      navigateFallback: '/'
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+    },
+  },
 
   googleFonts: {
     families: {
