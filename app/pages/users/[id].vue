@@ -25,6 +25,7 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const { setUserSeo } = useSeoMetaHelper()
 const showSongModal = ref(false)
+const showAvatarModal = ref(false)
 
 const resolveAvatarUrl = (avatar: string | null | undefined, name: string): string => {
   const fallback = `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(name)}`
@@ -75,7 +76,25 @@ const openSongModal = () => {
 const closeSongModal = () => {
   showSongModal.value = false
 }
-  
+
+const openAvatarModal = () => {
+  if (!profileAvatar.value) return
+  showAvatarModal.value = true
+}
+
+const closeAvatarModal = () => {
+  showAvatarModal.value = false
+}
+
+watch(showAvatarModal, (isOpen) => {
+  if (!process.client) return
+  document.body.style.overflow = isOpen ? 'hidden' : ''
+})
+
+onBeforeUnmount(() => {
+  if (!process.client) return
+  document.body.style.overflow = ''
+})
 
 onMounted(async () => {
     try {
@@ -132,13 +151,18 @@ const isOwnProfile = computed(() => currentUser.value?.id === id)
       <div class="bg-white dark:bg-[#181818] border border-gray-100 dark:border-neutral-800 rounded-2xl p-6 mb-5 shadow-sm">
         <div class="flex items-start gap-5">
           <div class="relative shrink-0">
-            <div class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-stone-300 dark:border-stone-700 bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-xl font-bold shadow-lg transition-colors duration-300">
+            <button
+              type="button"
+              class="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-stone-300 dark:border-stone-700 bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-xl font-bold shadow-lg transition-colors duration-300 cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-amber-500/60"
+              @click="openAvatarModal"
+              :aria-label="`Lihat foto profil ${profile.name}`"
+            >
               <img
                 :src="profileAvatar"
                 :alt="profile.name"
                 class="h-full w-full object-cover"
               >
-            </div>
+            </button>
 
             <div
               v-if="profile.notes || profile.profile_song"
@@ -257,6 +281,40 @@ const isOwnProfile = computed(() => currentUser.value?.id === id)
       </div>
 
     </div>
+
+    <Transition
+      enter-active-class="transition-opacity duration-200"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-150"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="showAvatarModal"
+        class="fixed inset-0 z-[100] bg-black/70 backdrop-blur-[1px] flex items-center justify-center p-4"
+        @click="closeAvatarModal"
+      >
+        <div class="relative" @click.stop>
+          <button
+            type="button"
+            class="absolute -top-3 cursor-pointer -right-3 h-8 w-8 rounded-full bg-white dark:bg-[#181818] text-gray-700 dark:text-gray-300 shadow-md hover:bg-gray-100 dark:hover:bg-[#2a2a2a] flex items-center justify-center"
+            @click="closeAvatarModal"
+            aria-label="Tutup preview foto"
+          >
+            ✕
+          </button>
+
+          <div class="h-72 w-72 sm:h-96 sm:w-96 overflow-hidden rounded-full border-4 border-white shadow-2xl">
+            <img
+              :src="profileAvatar"
+              :alt="profile?.name ?? 'Foto profil'"
+              class="h-full w-full object-cover"
+            >
+          </div>
+        </div>
+      </div>
+    </Transition>
 
     <SongModal :user="showSongModal ? selectedSongUser : null" @close="closeSongModal" />
   </div>
