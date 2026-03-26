@@ -217,6 +217,17 @@ export interface Comment {
 export interface ReactionSummary {
   total: number
   summary: Partial<Record<ReactionType, number>>
+  reactions?: Array<{
+    id?: string
+    type: ReactionType
+    user: Pick<UserBrief, 'id' | 'name' | 'avatar'>
+    created_at?: string
+  }>
+  reactors?: Array<{
+    user: Pick<UserBrief, 'id' | 'name' | 'avatar'>
+    type: ReactionType
+    reacted_at?: string
+  }>
 }
 
 // ─── Map Pin ─────────────────────────────────────────────────────────────────
