@@ -1,12 +1,24 @@
 <script setup lang="ts">
 const { isDark, toggleTheme } = useTheme()
+
+/**
+ * Tangkap posisi tengah tombol dari event klik,
+ * lalu teruskan ke toggleTheme untuk circle reveal.
+ */
+const handleClick = (e: MouseEvent) => {
+  const btn = e.currentTarget as HTMLElement
+  const rect = btn.getBoundingClientRect()
+  const originX = rect.left + rect.width / 2
+  const originY = rect.top + rect.height / 2
+  toggleTheme(originX, originY)
+}
 </script>
 
 <template>
   <button
-    @click="toggleTheme"
+    @click="handleClick"
     aria-label="Toggle tema"
-    class="cursor-pointer focus-ring relative inline-flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-200"
+    class="cursor-pointer focus-ring relative inline-flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150"
     :class="isDark
       ? 'bg-stone-800 hover:bg-stone-700 text-amber-400'
       : 'bg-stone-200 hover:bg-stone-300 text-amber-600'
