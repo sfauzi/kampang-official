@@ -35,6 +35,26 @@ const albums = computed(() => (results.value as SearchResults | null)?.results?.
 const groups = computed(() => (results.value as SearchResults | null)?.results?.groups ?? [])
 const users = computed(() => (results.value as SearchResults | null)?.results?.users ?? [])
 
+const isVideoMedia = (media: any): boolean => {
+  const type = String(media?.type ?? media?.media_type ?? '').toLowerCase()
+  const mime = String(media?.mime_type ?? media?.meta?.mime_type ?? '').toLowerCase()
+  return type === 'video' || type.includes('video') || mime.startsWith('video/')
+}
+
+const getMemoryPreview = (memory: any): string | null => {
+  const media = memory?.media?.[0]
+  if (!media || isVideoMedia(media)) return null
+
+  return media?.thumbnail_url ?? media?.url ?? null
+}
+
+const getAlbumPreview = (album: any): string | null => {
+  const media = album?.cover_media
+  if (!media || isVideoMedia(media)) return null
+
+  return media?.thumbnail_url ?? media?.url ?? null
+}
+
 const hasAnyResult = computed(() =>
   memories.value.length > 0 ||
   albums.value.length > 0 ||
@@ -148,8 +168,11 @@ onUnmounted(() => {
                 <NuxtLink v-for="m in memories" :key="m.id" :to="`/memories/${m.id}`"
                   class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#101010] transition"
                   @click="close">
-                  <img :src="m.media?.[0]?.thumbnail_url ?? m.media?.[0]?.url ?? '/placeholder-video.png'"
+                  <img v-if="getMemoryPreview(m)" :src="getMemoryPreview(m)!"
                     class="w-12 h-12 rounded-lg object-cover bg-gray-100 dark:bg-[#101010]" />
+                  <div v-else class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-[#101010] flex items-center justify-center">
+                    <Icon :name="isVideoMedia(m?.media?.[0]) ? 'heroicons:film' : 'heroicons:photo'" class="w-5 h-5 text-gray-400" />
+                  </div>
                   <div class="min-w-0">
                     <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ m.title ?? 'Tanpa judul'
                       }}</p>
@@ -166,8 +189,11 @@ onUnmounted(() => {
                 <NuxtLink v-for="a in albums" :key="a.id" :to="`/albums/${a.id}`"
                   class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#101010] transition"
                   @click="close">
-                  <img :src="a.cover_media?.thumbnail_url ?? a.cover_media?.url ?? '/placeholder-video.png'"
+                  <img v-if="getAlbumPreview(a)" :src="getAlbumPreview(a)!"
                     class="w-12 h-12 rounded-lg object-cover bg-gray-100 dark:bg-[#101010]" />
+                  <div v-else class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-[#101010] flex items-center justify-center">
+                    <Icon :name="isVideoMedia(a?.cover_media) ? 'heroicons:film' : 'heroicons:photo'" class="w-5 h-5 text-gray-400" />
+                  </div>
                   <div class="min-w-0">
                     <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ a.title }}</p>
                     <p class="text-xs text-gray-400 truncate">{{ a.description ?? '-' }}</p>
@@ -183,8 +209,11 @@ onUnmounted(() => {
                 <NuxtLink v-for="g in groups" :key="g.id" :to="`/groups/${g.id}`"
                   class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-[#101010] transition"
                   @click="close">
-                  <img :src="g.cover_image ?? '/placeholder-video.png'"
+                  <img v-if="g.cover_image" :src="g.cover_image"
                     class="w-12 h-12 rounded-lg object-cover bg-gray-100 dark:bg-[#101010]" />
+                  <div v-else class="w-12 h-12 rounded-lg bg-gray-100 dark:bg-[#101010] flex items-center justify-center">
+                    <Icon name="heroicons:user-group" class="w-5 h-5 text-gray-400" />
+                  </div>
                   <div class="min-w-0">
                     <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ g.name }}</p>
                     <p class="text-xs text-gray-400 truncate">{{ g.description ?? '-' }}</p>
@@ -202,6 +231,7 @@ onUnmounted(() => {
                   @click="close">
                   <img :src="u.avatar ?? `https://api.dicebear.com/6.x/initials/svg?seed=${encodeURIComponent(u.name)}`"
                     class="w-12 h-12 rounded-full object-cover bg-gray-100 dark:bg-[#101010]" />
+                  
                   <div class="min-w-0">
                     <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ u.name }}</p>
                     <p class="text-xs text-gray-400 truncate">Member</p>
