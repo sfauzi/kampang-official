@@ -320,6 +320,9 @@ const texts = [
 const randomText = computed(() => {
   return texts[Math.floor(Math.random() * texts.length)]
 })
+
+const { formatDateFull } = useFormatDate()
+
 </script>
 
 <template>
@@ -493,7 +496,7 @@ const randomText = computed(() => {
             <InfoItem label="Deskripsi" :value="user.description" icon="heroicons:document-text" />
             <InfoItem label="Alamat" :value="user.address" icon="heroicons:map-pin" />
             <InfoItem label="Catatan" :value="user.notes" icon="heroicons:pencil-square" />
-            <InfoItem label="Bergabung sejak" :value="user.created_at_formatted" icon="heroicons:calendar-days" />
+            <InfoItem label="Bergabung sejak" :value="formatDateFull(user.created_at)" icon="heroicons:calendar-days" />
           </div>
           <hr class="my-6 border-stone-200 dark:border-stone-800" />
 
