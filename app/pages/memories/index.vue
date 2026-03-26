@@ -134,6 +134,13 @@ function handleMobileCategorySelect(value: string) {
   showMobileFilters.value = false
 }
 
+function handlePageChange(nextPage: number) {
+  page.value = nextPage
+  if (import.meta.client) {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
 
 const isVideoMedia = (media: any): boolean => {
   const type = String(media?.type ?? media?.media_type ?? '').toLowerCase()
@@ -458,13 +465,13 @@ const getMediaPreview = (media: any): string | null => {
       <button
         v-for="p in pagination.last_page"
         :key="p"
-        class="w-9 h-9 rounded-xl text-sm font-semibold transition-all duration-200"
+        class="w-9 h-9 cursor-pointer rounded-xl text-sm font-semibold transition-all duration-200"
         :class="
           p === pagination.current_page
-            ? 'bg-brand text-white shadow-md'
-            : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-brand'
+            ? 'bg-amber-500 text-white shadow-md'
+            : 'bg-gray-100 dark:bg-[#101010] text-gray-600 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-500'
         "
-        @click="page = p"
+        @click="handlePageChange(p)"
       >
         {{ p }}
       </button>
