@@ -114,7 +114,7 @@ const stats = computed(() => [
     <div class="flex flex-wrap gap-2 mb-8">
       <NuxtLink
         to="/dashboard/memories/create"
-        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-[#181818] text-white text-sm font-bold transition-all duration-200 border border-gray-200 dark:border-neutral-800 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-500 dark:hover:text-white"
+        class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-[#181818] text-sm font-bold transition-all duration-200 border border-gray-200 dark:border-neutral-800 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-500 dark:hover:text-white"
       >
         <Icon name="heroicons:plus" class="w-4 h-4" />
         Kenangan Baru
