@@ -1,75 +1,112 @@
-# Nuxt Minimal Starter
+# 📌 Kampang Official
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+**Kampang Official** adalah platform web berbasis timeline yang dirancang untuk menyimpan dan membagikan kenangan secara interaktif, terinspirasi dari konsep timeline seperti Threads. Pengguna dapat membuat postingan kenangan, mengunggah media (foto/video), serta menjelajahi cerita dalam bentuk alur waktu yang dinamis dan modern.
 
-## Setup
+---
+## 🌐 Live Demo
+Akses langsung website:
+👉 https://kampangofficial.vercel.app
+---
 
-Make sure to install dependencies:
 
-```bash
-# npm
-npm install
+## 🚀 Tech Stack
 
-# pnpm
-pnpm install
+### Frontend
 
-# yarn
-yarn install
+* Nuxt.js (Vue 3)
+* Tailwind CSS
+* Axios (API communication)
 
-# bun
-bun install
+### Backend
+
+* Laravel (REST API)
+* Laravel Sanctum (Authentication)
+* MySQL
+---
+
+## ✨ Fitur Utama
+
+* 🧵 **Timeline Kenangan**
+  Menampilkan postingan seperti Threads (scroll vertikal, clean UI).
+
+* 📝 **Create Post**
+  Membuat kenangan berupa teks, gambar, atau video.
+
+* ❤️ **Interaksi**
+  Like, komentar, dan engagement antar pengguna.
+
+* 🔐 **Authentication**
+  Login & register menggunakan Laravel Sanctum.
+
+* 📱 **Responsive Design**
+  Tampilan optimal di desktop maupun mobile.
+
+* 📂 **Media Upload**
+  Mendukung upload gambar & video.
+
+---
+
+## 📁 Struktur Project
+
+```
+kampang-official/
+│
+├── frontend/ (Nuxt.js)
+│   ├── pages/
+│   ├── components/
+│   ├── composables/
+│   └── assets/
+│
+├── backend/ (Laravel API)
+│   ├── app/
+│   ├── routes/api.php
+│   ├── database/
+│   └── storage/
+│
+└── README.md
 ```
 
-## Development Server
 
-Start the development server on `http://localhost:3000`:
 
-```bash
-# npm
-npm run dev
+---
 
-# pnpm
-pnpm dev
+## 🖼️ Screenshot Preview (Toggle Collapse)
 
-# yarn
-yarn dev
+<details>
+  <summary>📸 Klik untuk melihat Screenshot</summary>
 
-# bun
-bun run dev
-```
+  <br>
 
-## Production
+  <img width="1318" height="1867" alt="screencapture-kampangofficial-vercel-app-memories-019d23ec-d6fa-73cc-89ff-1289c2e93066-2026-04-19-18_54_47" src="https://github.com/user-attachments/assets/9d712ed5-97f3-45ca-b123-dede278721c8" />
 
-Build the application for production:
+<img width="1318" height="693" alt="screencapture-kampangofficial-vercel-app-albums-2026-04-19-18_55_04" src="https://github.com/user-attachments/assets/8c6cda47-a494-4b78-90c3-4a6055d4af74" />
 
-```bash
-# npm
-npm run build
+<img width="1318" height="1237" alt="screencapture-kampangofficial-vercel-app-memories-2026-04-19-18_54_24" src="https://github.com/user-attachments/assets/d4e5c40a-8549-4ae7-b574-dacbcd9b8442" />
 
-# pnpm
-pnpm build
+<img width="1318" height="763" alt="screencapture-kampangofficial-vercel-app-2026-04-19-18_54_10" src="https://github.com/user-attachments/assets/9a14943d-ebd1-4856-bf99-6242e2a45235" />
 
-# yarn
-yarn build
 
-# bun
-bun run build
-```
+</details>
 
-Locally preview production build:
+---
 
-```bash
-# npm
-npm run preview
+## 📌 Konsep UI
 
-# pnpm
-pnpm preview
+* Clean & minimalis seperti social media modern
+* Fokus pada konten (storytelling)
+* Scroll-based interaction (infinite timeline)
+* Smooth animation & UX friendly
 
-# yarn
-yarn preview
+---
 
-# bun
-bun run preview
-```
+## 🤝 Kontribusi
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Kontribusi sangat terbuka! Silakan fork repo ini dan ajukan pull request.
+
+---
+
+## 📄 License
+
+MIT License © 2026 Kampang Official - ht
+
+---
