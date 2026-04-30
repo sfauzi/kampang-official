@@ -45,7 +45,7 @@ onMounted(() => {
         >
           <div
             v-if="isOpen"
-            class="relative w-full max-w-sm bg-white dark:bg-[#181818] border border-gray-100 dark:border-neutral-800 rounded-2xl shadow-xl p-6 font-[Manrope] z-10"
+            class="relative w-full max-w-sm bg-white dark:bg-[#181818] border border-gray-100 dark:border-neutral-800 rounded-2xl shadow-xl p-6 font-[Manrope] z-10 login-modal-root"
           >
             <!-- Close -->
             <button
